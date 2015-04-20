@@ -190,4 +190,20 @@ public class BlockContext {
 
 	/** If there is no enclosing context, we must be a method. */
 	public boolean isBlock() { return false; }
+
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		BlockContext c = this;
+		STMetaClassObject enclosingClass = c.compiledBlock.enclosingClass;
+		String s;
+		if ( enclosingClass!=null ) {
+			s = enclosingClass.name + ">>" + c.compiledBlock.name + c.vm.pLocals(c) + c.vm.pContextWorkStack(c);
+		}
+		else {
+			s = c.compiledBlock.qualifiedName + c.vm.pLocals(c) + c.vm.pContextWorkStack(c);
+		}
+		buf.append(s);
+		return buf.toString();
+	}
 }

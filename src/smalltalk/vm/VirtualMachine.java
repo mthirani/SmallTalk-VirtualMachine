@@ -186,15 +186,12 @@ public class VirtualMachine {
 
 	void traceStack() {
 		BlockContext c = ctx;
-		STMetaClassObject enclosingClass = c.compiledBlock.enclosingClass;
-		String s;
-		if ( enclosingClass!=null ) {
-			s = enclosingClass.name + ">>" + c.compiledBlock.name + pLocals(c) + pContextWorkStack(c);
+		List<String> a = new ArrayList<>();
+		while ( c!=null ) {
+			a.add( c.toString() );
+			c = c.invokingContext;
 		}
-		else {
-			s = c.compiledBlock.qualifiedName + pLocals(c) + pContextWorkStack(c);
-		}
-		System.out.println(s);
+		System.out.println(Utils.join(a,", "));
 	}
 
 	public String getVMStackString() {
