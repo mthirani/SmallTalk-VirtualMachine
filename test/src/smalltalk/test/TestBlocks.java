@@ -78,6 +78,22 @@ public class TestBlocks extends BaseTest {
 		execAndCheck(input, expecting);
 	}
 
+	@Test public void testSendBlockBackToSameMethodAndSetLocal() {
+		String input =
+		"class T [\n" +
+		"    f: blk pass: p [\n" +
+		"       |x|\n" +
+		"       p=1 ifTrue: [self g: [x:=5]]\n" + // pass 1: send to g, which sends back to us
+		"           ifFalse:[blk value].\n" +     // pass 2: eval blk [x:=5] passed back from g
+		"       ^x\n" +                           // should be 5 not nil
+		"    ]\n" +
+		"    g: blk [ self f: blk pass: 2]\n"+   // send blk back to f for eval
+		"]\n" +
+		"^T new f: nil pass: 1"; // make a T then call a:b:
+		String expecting = "5";
+		execAndCheck(input, expecting);
+	}
+
 	@Test public void testRemoteReturn() {
 		String input =
 			"class T [\n" +
