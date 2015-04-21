@@ -22,8 +22,8 @@ public class TestCore extends BaseTest {
 	}
 
 	@Test public void testFalse() {
-		String input = "^true";
-		String expecting = "true";
+		String input = "^false";
+		String expecting = "false";
 		execAndCheck(input, expecting);
 	}
 
