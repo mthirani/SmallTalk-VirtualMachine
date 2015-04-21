@@ -191,6 +191,7 @@ public class VirtualMachine {
 			a.add( c.toString() );
 			c = c.invokingContext;
 		}
+		Collections.reverse(a);
 		System.out.println(Utils.join(a,", "));
 	}
 
