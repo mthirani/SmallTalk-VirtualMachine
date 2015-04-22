@@ -48,7 +48,7 @@ public class TestBlocks extends BaseTest {
 		execAndCheck(input, expecting);
 	}
 
-	@Test public void testClosure() {
+	@Test public void testEvalReturnBlock() {
 		/*
 		0000:  dbg '<string>', 5:0              MainClass>>main[nil][]
 		0007:  dbg '<string>', 5:7              MainClass>>main[nil][]

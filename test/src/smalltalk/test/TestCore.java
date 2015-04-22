@@ -231,4 +231,86 @@ public class TestCore extends BaseTest {
 		execAndCheck("^true not", "false");
 		execAndCheck("^false not", "true");
 	}
+
+	@Test public void testBasicNew() {
+		String input =
+			"class T [\n" +
+			"    f [^'hi']\n" +
+			"]\n" +
+			"^T basicNew f\n";
+		String expecting = "hi";
+		execAndCheck(input, expecting);
+	}
+
+	@Test public void testNew() {
+		String input =
+			"class T [\n" +
+			"    f [^'hi']\n" +
+			"]\n" +
+			"^T new f\n"; // should be same as basicNew
+		String expecting = "hi";
+		execAndCheck(input, expecting);
+	}
+
+	@Test public void testInit() {
+		String input =
+			"class T [\n" +
+			"    |x|\n" +
+			"    initialize [x:=1]\n"+
+			"    f [^x]\n" +
+			"]\n" +
+			"^T new f\n"; // 'new' calls 'initialize' after 'basicNew'
+		String expecting = "1";
+		execAndCheck(input, expecting);
+	}
+
+	@Test public void testInitWithValue() {
+		String input =
+			"class T [\n" +
+			"    |x|\n" +
+			"    initialize: v [x:=v]\n"+
+			"    f [^x]\n" +
+			"]\n" +
+			"^(T new: 99) f\n";
+		String expecting = "99";
+		execAndCheck(input, expecting);
+	}
+
+	@Test public void testClassMethod() {
+		/*
+		0000:  dbg '<string>', 5:11             MainClass>>main[][]
+		0007:  dbg '<string>', 5:3              MainClass>>main[][]
+		0014:  push_global    'T'               MainClass>>main[][class T]
+		0017:  send           0, 'factory'      MainClass>>main[][], T>>factory[][]
+		0000:  dbg '<string>', 2:19             MainClass>>main[][], T>>factory[][]
+		0007:  self                             MainClass>>main[][], T>>factory[][class T]
+		0008:  send           0, 'new'          MainClass>>main[][], T>>factory[][], Object>>new[][]
+		0000:  dbg 'image.st', 20:22            MainClass>>main[][], T>>factory[][], Object>>new[][]
+		0007:  dbg 'image.st', 20:13            MainClass>>main[][], T>>factory[][], Object>>new[][]
+		0014:  self                             MainClass>>main[][], T>>factory[][], Object>>new[][class T]
+		0015:  send           0, 'basicNew'     MainClass>>main[][], T>>factory[][], Object>>new[][a T]
+		0020:  send           0, 'initialize'   MainClass>>main[][], T>>factory[][], Object>>new[][], Object>>initialize[][]
+		0000:  self                             MainClass>>main[][], T>>factory[][], Object>>new[][], Object>>initialize[][a T]
+		0001:  dbg 'image.st', 29:16            MainClass>>main[][], T>>factory[][], Object>>new[][], Object>>initialize[][a T]
+		0008:  return                           MainClass>>main[][], T>>factory[][], Object>>new[][a T]
+		0025:  dbg 'image.st', 20:7             MainClass>>main[][], T>>factory[][], Object>>new[][a T]
+		0032:  return                           MainClass>>main[][], T>>factory[][a T]
+		0013:  dbg '<string>', 2:13             MainClass>>main[][], T>>factory[][a T]
+		0020:  return                           MainClass>>main[][a T]
+		0022:  send           0, 'asString'     MainClass>>main[][], T>>asString[][]
+		0000:  push_literal   'blort'           MainClass>>main[][], T>>asString[]['blort']
+		0003:  dbg '<string>', 3:14             MainClass>>main[][], T>>asString[]['blort']
+		0010:  return                           MainClass>>main[]['blort']
+		0027:  dbg '<string>', 5:0              MainClass>>main[]['blort']
+		0034:  return
+		 */
+		String input =
+			"class T [\n" +
+			"    factory [^self new]\n" +
+			"    asString [^'blort']\n"+
+			"]\n" +
+			"^T factory asString\n";
+		String expecting = "blort";
+		execAndCheck(input, expecting);
+	}
 }

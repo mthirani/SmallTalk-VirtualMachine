@@ -448,6 +448,13 @@ public class TestCodeGen extends BaseTest {
 		String expecting = new String(_expecting);
 		String result = linkedListClass.toTestString();
 		assertEquals(expecting, result);
+
+		STMetaClassObject linkClass = vm.lookupClass("Link");
+		expectedOutputFileName = Run.getImageURL("smalltalk/test/link-teststring.txt").getFile();
+		_expecting = Utils.readFile(expectedOutputFileName);
+		expecting = new String(_expecting);
+		result = linkClass.toTestString();
+		assertEquals(expecting, result);
 	}
 
 	/** Load and compile smalltalk/test/linkedlist.st then compare
