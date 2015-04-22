@@ -47,7 +47,7 @@ methods:
     0005:  self             
     0006:  return           
 
-    name: withValue:
+    name: static withValue:
     qualifiedName: Link>>withValue:
     nargs: 1
     nlocals: 0

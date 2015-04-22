@@ -1,6 +1,9 @@
 package smalltalk.test;
 
 import org.junit.Test;
+import smalltalk.vm.exceptions.ClassMessageSentToInstance;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestCore extends BaseTest {
 	@Test public void testEmpty() {
@@ -306,11 +309,69 @@ public class TestCore extends BaseTest {
 		 */
 		String input =
 			"class T [\n" +
-			"    factory [^self new]\n" +
+			"    class factory [^self new]\n" +
 			"    asString [^'blort']\n"+
 			"]\n" +
 			"^T factory asString\n";
 		String expecting = "blort";
 		execAndCheck(input, expecting);
+	}
+
+	@Test public void testClassPrimitiveMessageOnInstanceError() {
+		/*
+		0000:  dbg '<string>', 1:3              MainClass>>main[][]
+		0007:  push_int       99                MainClass>>main[][99]
+		0012:  send           0, 'new'  <======= OOOOPS!! cannot send class message "new" to an Integer instance
+		 */
+		String input =
+			"99 new\n";
+		String expecting =
+			"ClassMessageSentToInstance: new is a class method sent to instance of Integer\n" +
+			"    at                              MainClass>>main[][99](<string>:1:3)       executing 0012:  send           0, 'new'\n";
+		String result = "";
+		try {
+			execAndCheck(input, expecting);
+		}
+		catch (ClassMessageSentToInstance te) {
+			result = te.toString();
+		}
+		assertEquals(expecting, result);
+	}
+
+	@Test public void testClassMessageOnInstanceError() {
+		/*
+		0000:  dbg '<string>', 5:7              MainClass>>main[][]
+		0007:  dbg '<string>', 5:3              MainClass>>main[][]
+		0014:  push_global    'T'               MainClass>>main[][class T]
+		0017:  send           0, 'new'          MainClass>>main[][], Object>>new[][]
+		0000:  dbg 'image.st', 20:22            MainClass>>main[][], Object>>new[][]
+		0007:  dbg 'image.st', 20:13            MainClass>>main[][], Object>>new[][]
+		0014:  self                             MainClass>>main[][], Object>>new[][class T]
+		0015:  send           0, 'basicNew'     MainClass>>main[][], Object>>new[][a T]
+		0020:  send           0, 'initialize'   MainClass>>main[][], Object>>new[][], Object>>initialize[][]
+		0000:  self                             MainClass>>main[][], Object>>new[][], Object>>initialize[][a T]
+		0001:  dbg 'image.st', 29:16            MainClass>>main[][], Object>>new[][], Object>>initialize[][a T]
+		0008:  return                           MainClass>>main[][], Object>>new[][a T]
+		0025:  dbg 'image.st', 20:7             MainClass>>main[][], Object>>new[][a T]
+		0032:  return                           MainClass>>main[][a T]
+		0022:  send           0, 'factory'      <======= OOOOPS!! cannot send class message "factor" to a T instance
+		 */
+		String input =
+			"class T [\n" +
+			"    class factory [^self new]\n" +
+			"    asString [^'blort']\n"+
+			"]\n" +
+			"^T new factory";
+		String expecting =
+			"ClassMessageSentToInstance: factory is a class method sent to instance of T\n" +
+			"    at                             MainClass>>main[][a T](<string>:5:3)       executing 0022:  send           0, 'factory'\n";
+		String result = "";
+		try {
+			execAndCheck(input, expecting);
+		}
+		catch (ClassMessageSentToInstance te) {
+			result = te.toString();
+		}
+		assertEquals(expecting, result);
 	}
 }

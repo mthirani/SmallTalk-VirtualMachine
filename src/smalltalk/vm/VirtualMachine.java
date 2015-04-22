@@ -90,6 +90,8 @@ public class VirtualMachine {
 		switch ( type ) {
 			case "MessageNotUnderstood":
 				throw new MessageNotUnderstood(msg,stack);
+			case "ClassMessageSentToInstance":
+				throw new ClassMessageSentToInstance(msg,stack);
 			case "IndexOutOfRange":
 				throw new IndexOutOfRange(msg,stack);
 			case "BlockCannotReturn":

@@ -88,6 +88,9 @@ public class STCompiledBlock {
  	 */
 	public final Primitive primitive;
 
+	/** True if method was defined as class method in Smalltalk */
+	public final boolean isClassMethod;
+
 	public STCompiledBlock(STBlock blk) {
 	}
 
