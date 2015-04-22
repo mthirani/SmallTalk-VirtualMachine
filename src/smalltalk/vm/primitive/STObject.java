@@ -67,6 +67,11 @@ public class STObject {
 			case Object_CLASSNAME :
 				break;
 			case Object_SAME : // SmallTalk = op.  same as == in Java (same object)
+				STObject x = receiver;
+				STObject y = ctx.stack[firstArg]; // get right operand (first arg)
+				//System.out.println("SAME "+x+", "+y);
+				ctx.sp -= 2;
+				result = vm.newBoolean(x == y);
 				break;
 			case Object_HASH:
 				break;
