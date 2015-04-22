@@ -83,7 +83,7 @@ public enum Primitive {
 		this.performer = performer;
 	}
 
-	public STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
-		return performer.perform(ctx, nArgs, primitive);
+	public STObject perform(BlockContext ctx, int nArgs) {
+		return performer.perform(ctx, nArgs, this);
 	}
 }

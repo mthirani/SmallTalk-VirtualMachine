@@ -42,20 +42,27 @@ public class STObject {
 		if ( metaclass==null ) {
 			throw new InternalVMException(null, "object "+toString()+" has null metaclass", null);
 		}
-		return null;
+		return metaclass.vm.newString(toString());
 	}
 
+	/** Implement a primitive method in active context ctx.
+	 *  A non-null return value should be pushed onto operand stack by the VM.
+	 *  Primitive methods do not bother pushing a `BlockContext` object as
+	 *  they are executing in Java not Smalltalk.
+	 */
 	public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
 		VirtualMachine vm = ctx.vm;
 		vm.assertNumOperands(nArgs+1); // ensure args + receiver
-		int firstArg = ctx.sp - nArgs + 1;
+		// index of 1st arg on opnd stack; use only if arg(s) present for primitive
+		int firstArg = ctx.sp - nArgs + 1; 
 		STObject receiver = ctx.stack[firstArg-1];
-		STObject result = vm.nil();
+		STObject result;
 		switch ( primitive ) {
 			case Object_ASSTRING:
 				ctx.sp--; // pop receiver
-				// if not overridden, ask the *java* backing object for an st string
-				result =  receiver.asString();
+				// if asString not overridden in Smalltalk, create an STString
+				// from the *java* object's toString(); see STObject.asString()
+				result = receiver.asString();
 				break;
 			case Object_CLASSNAME :
 				break;
