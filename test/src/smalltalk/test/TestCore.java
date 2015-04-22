@@ -374,4 +374,28 @@ public class TestCore extends BaseTest {
 		}
 		assertEquals(expecting, result);
 	}
+
+	@Test public void testInstanceMessageOnClassError() {
+		/*
+		0000:  dbg '<string>', 4:3              MainClass>>main[][]
+		0007:  push_global    'T'               MainClass>>main[][class T]
+		0010:  send           0, 'asString'
+		 */
+		String input =
+			"class T [\n" +
+			"    asString [^'blort']\n"+
+			"]\n" +
+			"^T asString";
+		String expecting =
+			"MessageNotUnderstood: asString is an instance method sent to class object T\n" +
+			"    at                         MainClass>>main[][class T](<string>:4:3)       executing 0010:  send           0, 'asString'\n";
+		String result = "";
+		try {
+			execAndCheck(input, expecting);
+		}
+		catch (ClassMessageSentToInstance te) {
+			result = te.toString();
+		}
+		assertEquals(expecting, result);
+	}
 }
