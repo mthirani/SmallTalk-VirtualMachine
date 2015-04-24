@@ -2,6 +2,7 @@ package smalltalk.test;
 
 import org.junit.Test;
 import smalltalk.vm.exceptions.ClassMessageSentToInstance;
+import smalltalk.vm.exceptions.MessageNotUnderstood;
 
 import static org.junit.Assert.assertEquals;
 
@@ -400,7 +401,7 @@ public class TestCore extends BaseTest {
 		try {
 			execAndCheck(input, expecting);
 		}
-		catch (ClassMessageSentToInstance te) {
+		catch (MessageNotUnderstood te) {
 			result = te.toString();
 		}
 		assertEquals(expecting, result);
