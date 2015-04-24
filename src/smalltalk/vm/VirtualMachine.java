@@ -15,7 +15,6 @@ import smalltalk.vm.exceptions.VMException;
 import smalltalk.vm.primitive.BlockContext;
 import smalltalk.vm.primitive.BlockDescriptor;
 import smalltalk.vm.primitive.Primitive;
-import smalltalk.vm.primitive.STArray;
 import smalltalk.vm.primitive.STBoolean;
 import smalltalk.vm.primitive.STCompiledBlock;
 import smalltalk.vm.primitive.STFloat;
@@ -47,7 +46,7 @@ public class VirtualMachine {
 	public boolean trace = false;
 
 	public VirtualMachine(STSymbolTable symtab) {
-		// create system dictionary and predefined nil, true, false, Transcript
+		// create system dictionary and predefined Transcript
 		// convert symbol table ClassSymbols to STMetaClassObjects
 	}
 
