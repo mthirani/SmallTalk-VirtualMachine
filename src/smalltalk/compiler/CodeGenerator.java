@@ -28,8 +28,15 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	 */
 	@Override
 	protected Code aggregateResult(Code aggregate, Code nextResult) {
-		// join aggregate and nextResult
-		return null;
+		if ( aggregate!=Code.None ) {
+			if ( nextResult!=Code.None ) {
+				return aggregate.join(nextResult);
+			}
+			return aggregate;
+		}
+		else {
+			return nextResult;
+		}
 	}
 
 	@Override

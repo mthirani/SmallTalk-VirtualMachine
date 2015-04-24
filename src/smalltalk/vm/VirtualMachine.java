@@ -1,5 +1,7 @@
 package smalltalk.vm;
 
+import org.antlr.symtab.ClassSymbol;
+import org.antlr.symtab.Symbol;
 import smalltalk.compiler.STSymbolTable;
 import smalltalk.vm.exceptions.BlockCannotReturn;
 import smalltalk.vm.exceptions.IndexOutOfRange;
@@ -46,6 +48,16 @@ public class VirtualMachine {
 	public boolean trace = false;
 
 	public VirtualMachine(STSymbolTable symtab) {
+		systemDict = new SystemDictionary(this);
+		for (Symbol s : symtab.GLOBALS.getSymbols()) {
+			if ( s instanceof ClassSymbol ) {
+				systemDict.define(s.getName(),
+								  new STMetaClassObject(this,(STCLass)s));
+			}
+		}
+		STObject transcript = new STObject(systemDict.lookupClass("TranscriptStream"));
+		systemDict.define("Transcript", transcript);
+
 		// create system dictionary and predefined Transcript
 		// convert symbol table ClassSymbols to STMetaClassObjects
 	}

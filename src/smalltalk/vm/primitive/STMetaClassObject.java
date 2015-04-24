@@ -30,8 +30,16 @@ public class STMetaClassObject extends STObject {
 	STMetaClassObject(VirtualMachine vm, STClass classSymbol) {
 		super(null); // metaclass for a metaclass is 'this' but 'this' doesn't exist yet; see override of getSTClass()
 		this.vm = vm;
+		fields = new ArrayList<>();
 		// make space for ALL fields, including inherited ones
+		for (FieldSymbol f : classSymbol.getFields()) {
+			fields.add(f.getName());
+		}
 		// for all methods defined in classSymbol, map method name to its compiled method
+		methods = new HashMap<>();
+		for (MethodSymbol m : classSymbol.getDefinedMethods()) {
+			methods.put(m.getName(), ((STMethod)m).compiledBlock);
+		}
 		// set enclosingClass for all nested blocks within method
 	}
 
