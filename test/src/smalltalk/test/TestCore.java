@@ -235,6 +235,13 @@ public class TestCore extends BaseTest {
 		execAndCheck("^false not", "true");
 	}
 
+	@Test public void testHelloWorld() {
+		String input =
+			"Transcript show: 'hi'\n";
+		String expecting = "a MainClass";
+		execAndCheck(input, expecting);
+	}
+
 	@Test public void testBasicNew() {
 		String input =
 			"class T [\n" +
