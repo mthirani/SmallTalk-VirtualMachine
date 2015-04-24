@@ -109,11 +109,7 @@ public class TestSymbolProblems extends BaseTest {
 	public void check(String input, String expecting, String[] errors) {
 		CompilerWithHooks compiler = parseAndDefineSymbols(input);
 		String result = compiler.getSymbolTable().GLOBALS.toTestString(", ", ">>");
-		String knownPrefix = "global>>nil, global>>true, global>>false, global>>Transcript";
-		if ( expecting.length()>0 ) {
-			knownPrefix += ", ";
-		}
-		assertEquals(knownPrefix+expecting, result);
+		assertEquals(expecting, result);
 		assertEquals(Arrays.asList(errors), compiler.errors);
 	}
 }
