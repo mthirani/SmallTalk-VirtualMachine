@@ -1,5 +1,6 @@
 package smalltalk.compiler;
 
+import org.antlr.symtab.Symbol;
 import org.antlr.symtab.VariableSymbol;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -17,15 +18,27 @@ public class ResolveSymbols extends SetScope {
 
 	@Override
 	public void enterId(@NotNull SmalltalkParser.IdContext ctx) {
-		ctx.sym = null;
+		ctx.sym = currentScope.resolve(ctx.getStart().getText());
 	}
 
 	@Override
 	public void enterLvalue(@NotNull SmalltalkParser.LvalueContext ctx) {
-		ctx.sym = null;
+		ctx.sym = checkIDExists(ctx.getStart());
 	}
 
 	public VariableSymbol checkIDExists(Token ID) {
-		return null;
+		Symbol sym = currentScope.resolve(ID.getText());
+		if ( sym==null ) {
+			compiler.error("unknown variable "+ID.getText()+" in "+currentScope.toQualifierString(">>"));
+			// we assume it's a classname if not on left hand size
+			return null;
+		}
+		if ( !(sym instanceof VariableSymbol) ) {
+			compiler.error("symbol "+ID.getText()+
+							   " is not a variable/argument in "+
+							   currentScope.toQualifierString(">>"));
+			sym = null;
+		}
+		return (VariableSymbol)sym;
 	}
 }
