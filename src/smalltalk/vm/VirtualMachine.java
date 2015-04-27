@@ -2,6 +2,7 @@ package smalltalk.vm;
 
 import org.antlr.symtab.ClassSymbol;
 import org.antlr.symtab.Symbol;
+import smalltalk.compiler.STClass;
 import smalltalk.compiler.STSymbolTable;
 import smalltalk.vm.exceptions.BlockCannotReturn;
 import smalltalk.vm.exceptions.IndexOutOfRange;
@@ -52,7 +53,7 @@ public class VirtualMachine {
 		for (Symbol s : symtab.GLOBALS.getSymbols()) {
 			if ( s instanceof ClassSymbol ) {
 				systemDict.define(s.getName(),
-								  new STMetaClassObject(this,(STCLass)s));
+								  new STMetaClassObject(this,(STClass)s));
 			}
 		}
 		STObject transcript = new STObject(systemDict.lookupClass("TranscriptStream"));
@@ -85,6 +86,25 @@ public class VirtualMachine {
 			int op = 0; // ...
 			switch ( op ) {
 				case Bytecode.NIL:
+					ctx.push(nil());
+					break;
+				case Bytecode.SEND:
+					// done on the fly, not to be trusted :)
+					int nArgs = consumeShort(ctx.ip);
+					STObject recv = ctx.stack[ctx.sp - nArgs];
+					int litindex = consumeShort(ctx.ip);
+					String msgName = ctx.compiledBlock.literals[litindex];
+					STCompiledBlock blk = recv.getSTClass().resolveMethod(msgName);
+					// if null, throw MessageNotUnderstood
+					if ( blk.isPrimitive() ) {
+						STObject result = blk.primitive.perform(ctx, nArgs);
+						if ( result!=null ) {
+							ctx.push(result);
+						}
+					}
+					else { // it's a method call
+						// push context
+					}
 					break;
 			}
 			if ( trace ) traceStack(); // show stack *after* execution
@@ -185,6 +205,17 @@ public class VirtualMachine {
 		return new STNil(this);
 	}
 
+	public int consumeShort(int index) {
+		int x = getShort(index);
+		ctx.ip += Bytecode.OperandType.SHORT.sizeInBytes;
+		return x;
+	}
+
+	// get short operand out of bytecode sequence
+	public int getShort(int index) {
+		byte[] code = ctx.compiledBlock.bytecode;
+		return Bytecode.getShort(code, index);
+	}
 	// D e b u g g i n g
 
 	void trace() {

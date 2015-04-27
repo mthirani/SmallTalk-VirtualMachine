@@ -18,7 +18,7 @@ public class STObject {
 	/** Which smalltalk-visible fields are defined all the way up the superclass chain? */
 	public final STObject[] fields;
 
-	STObject(STMetaClassObject metaclass) {
+	public STObject(STMetaClassObject metaclass) {
 		this.metaclass = metaclass;
 		fields = null;
 		// Create empty slot for each field directly defined by metaclass

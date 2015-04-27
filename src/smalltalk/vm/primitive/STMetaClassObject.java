@@ -27,7 +27,7 @@ public class STMetaClassObject extends STObject {
 	public final List<String> fields;
 	public final Map<String,STCompiledBlock> methods;
 
-	STMetaClassObject(VirtualMachine vm, STClass classSymbol) {
+	public STMetaClassObject(VirtualMachine vm, STClass classSymbol) {
 		super(null); // metaclass for a metaclass is 'this' but 'this' doesn't exist yet; see override of getSTClass()
 		this.vm = vm;
 		fields = new ArrayList<>();
