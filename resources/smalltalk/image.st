@@ -20,7 +20,7 @@ class Object [
        ^self basicNew initialize
     ]
 
-    new: x [
+    class new: x [
        "Create new object with an arg. Requires that you implement initialize: x
         like: initialize [ super initialize. your-init-code. ^self ]"
        ^self new initialize: x
@@ -113,7 +113,7 @@ class Number : Object [
 ]
 
 class Integer : Number [
-   "this object has no fields visible from smalltalk code, backed by Java class STInteger"
+   "this object has no fields visible from smalltalk code and is backed by Java class STInteger"
    + y <primitive:#Integer_ADD>
    - y <primitive:#Integer_SUB>
    * y <primitive:#Integer_MULT>

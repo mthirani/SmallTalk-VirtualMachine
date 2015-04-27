@@ -1,6 +1,7 @@
 package smalltalk.compiler;
 
 import org.antlr.symtab.Scope;
+import org.antlr.symtab.Utils;
 import org.antlr.v4.runtime.misc.NotNull;
 
 public class SetScope extends SmalltalkBaseListener {
@@ -19,6 +20,42 @@ public class SetScope extends SmalltalkBaseListener {
 
 	@Override
 	public void exitClassDef(@NotNull SmalltalkParser.ClassDefContext ctx) {
+		popScope();
+	}
+
+	@Override
+	public void enterMain(@NotNull SmalltalkParser.MainContext ctx) {
+		if ( ctx.body().getChildCount()==0 ) return;
+		pushScope(ctx.classScope);
+		pushScope(ctx.scope);
+	}
+
+	@Override
+	public void exitMain(@NotNull SmalltalkParser.MainContext ctx) {
+		if ( ctx.body().getChildCount()==0 ) return;
+		popScope(); // pop main method
+		popScope(); // pop MainClass
+	}
+
+	@Override
+	public void enterSmalltalkMethodBlock(@NotNull SmalltalkParser.SmalltalkMethodBlockContext ctx) {
+		SmalltalkParser.MethodContext methodNode =
+			(SmalltalkParser.MethodContext) Utils.getAncestor(ctx, SmalltalkParser.RULE_method);
+		pushScope(methodNode.scope);
+	}
+
+	@Override
+	public void exitSmalltalkMethodBlock(@NotNull SmalltalkParser.SmalltalkMethodBlockContext ctx) {
+		popScope();
+	}
+
+	@Override
+	public void enterBlock(@NotNull SmalltalkParser.BlockContext ctx) {
+		pushScope(ctx.scope);
+	}
+
+	@Override
+	public void exitBlock(@NotNull SmalltalkParser.BlockContext ctx) {
 		popScope();
 	}
 

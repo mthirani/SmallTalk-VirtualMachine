@@ -193,10 +193,6 @@ public class TestSymbolDefs extends BaseTest {
 	public void check(String input, String expecting) {
 		GlobalScope globals = parseAndGetGlobalScope(input);
 		String result = globals.toTestString(", ", ">>");
-		String knownPrefix = "global>>nil, global>>true, global>>false, global>>Transcript";
-		if ( expecting.length()>0 ) {
-			knownPrefix += ", ";
-		}
-		assertEquals(knownPrefix+expecting, result);
+		assertEquals(expecting, result);
 	}
 }
