@@ -12,7 +12,36 @@ public class STInteger extends STObject {
 	}
 
 	public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
-		return null;
+		VirtualMachine vm = ctx.vm;
+		int firstArg = ctx.sp - nArgs + 1;
+		STObject receiverObj = ctx.stack[firstArg - 1];
+		STInteger receiver = (STInteger)receiverObj;
+		STObject result = vm.nil();
+		int v;
+		STObject ropnd;
+		switch ( primitive ) {
+			case Integer_ADD:
+				ropnd = ctx.stack[firstArg]; // get right operand (first arg)
+				ctx.sp--; // pop ropnd
+				ctx.sp--; // pop receiver
+				v = receiver.v + ((STInteger)ropnd).v;
+				result = new STInteger(vm, v);
+				break;
+			case Integer_SUB:
+				ropnd = ctx.stack[firstArg]; // get right operand (first arg)
+				ctx.sp--; // pop ropnd
+				ctx.sp--; // pop receiver
+				v = receiver.v - ((STInteger)ropnd).v;
+				result = new STInteger(vm, v);
+				break;
+			case Integer_EQ:
+				ropnd = ctx.stack[firstArg]; // get right operand (first arg)
+				ctx.sp--; // pop ropnd
+				ctx.sp--; // pop receiver
+				result = new STBoolean(vm, receiver.v == ((STInteger)ropnd).v);
+				break;
+		}
+		return result;
 	}
 
 	@Override
