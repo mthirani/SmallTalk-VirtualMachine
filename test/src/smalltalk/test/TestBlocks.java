@@ -455,6 +455,31 @@ public class TestBlocks extends BaseTest {
 
 	@Test public void testAttemptDoubleReturn() {
 		/*
+		 */
+		String input =
+		"class T [\n" +
+		"    f [^[^99]]\n" + // return block that returns 99
+		"]\n" +
+		"|t|\n" +
+		"t := T new.\n" +
+		"(t f) value"; // Send f to t then evaluate block that comes back, [^99],
+		// which tries to return from its surrounding method, f, again.
+		String expecting =
+		"BlockCannotReturn: T>>f-block0 can't trigger return again from method T>>f\n" +
+		"    at                                    f>>f-block0[][](<string>:2:9)       executing 0012:  return           \n" +
+		"    at                             MainClass>>main[a T][](<string>:6:3)       executing 0052:  send           0, 'value'\n";
+		String result = "";
+		try {
+			execAndCheck(input, expecting);
+		}
+		catch (BlockCannotReturn bcr) {
+			result = bcr.toString();
+		}
+		assertEquals(expecting, result);
+	}
+
+	@Test public void testAttemptDoubleReturn2() {
+		/*
 		0000:  dbg '<string>', 6:0              MainClass>>main[nil][]
 		0007:  dbg '<string>', 6:7              MainClass>>main[nil][]
 		0014:  push_global    'T'               MainClass>>main[nil][class T]
@@ -491,19 +516,19 @@ public class TestBlocks extends BaseTest {
 		0012:  return
 		 */
 		String input =
-			"class T [\n" +
-			"    f [ self g: [^[^99]]. ^1]\n" + // send a block that returns a block that returns 99 from f to g. the ^1 is dead code
-			"    g: blk [ blk value ]\n" +      // eval block that forces f to return 99.
-											    // VM unrolls method invocation stack to caller of f upon evaluating [^99]
-			"]\n" +
-			"|t|\n" +
-			"t := T new.\n" +
-			"^t f value"; // Send f to t then evaluate block that comes back, [^99],
-			        	  // which tries to return from its surrounding method, f, again.
+		"class T [\n" +
+		"    f [ self g: [^[^99]]. ^1]\n" + // send a block that returns a block that returns 99 from f to g. the ^1 is dead code
+		"    g: blk [ blk value ]\n" +      // eval block that forces f to return 99.
+		// VM unrolls method invocation stack to caller of f upon evaluating [^99]
+		"]\n" +
+		"|t|\n" +
+		"t := T new.\n" +
+		"t f value"; // Send f to t then evaluate block that comes back, [^99],
+		// which tries to return from its surrounding method, f, again.
 		String expecting =
-			"BlockCannotReturn: T>>f-block1 can't trigger return again from method T>>f\n" +
-			"    at                             f-block0>>f-block1[][](<string>:2:19)      executing 0012:  return           \n" +
-			"    at                             MainClass>>main[a T][](<string>:7:3)       executing 0052:  send           0, 'value'\n";
+		"BlockCannotReturn: T>>f-block1 can't trigger return again from method T>>f\n" +
+		"    at                             f-block0>>f-block1[][](<string>:2:19)      executing 0012:  return           \n" +
+		"    at                             MainClass>>main[a T][](<string>:7:3)       executing 0052:  send           0, 'value'\n";
 		String result = "";
 		try {
 			execAndCheck(input, expecting);
