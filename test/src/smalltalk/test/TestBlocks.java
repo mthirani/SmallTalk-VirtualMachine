@@ -528,7 +528,7 @@ public class TestBlocks extends BaseTest {
 		String expecting =
 		"BlockCannotReturn: T>>f-block1 can't trigger return again from method T>>f\n" +
 		"    at                             f-block0>>f-block1[][](<string>:2:19)      executing 0012:  return           \n" +
-		"    at                             MainClass>>main[a T][](<string>:7:3)       executing 0052:  send           0, 'value'\n";
+		"    at                             MainClass>>main[a T][](<string>:7:2)       executing 0052:  send           0, 'value'\n";
 		String result = "";
 		try {
 			execAndCheck(input, expecting);
