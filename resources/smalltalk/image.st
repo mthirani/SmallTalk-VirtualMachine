@@ -128,6 +128,7 @@ class Integer : Number [
    ]
    hash [ ^self ]
    mod: n <primitive:#Integer_MOD>
+   asFloat <primitive:#Integer_ASFLOAT>
 ]
 
 class Float : Number [
