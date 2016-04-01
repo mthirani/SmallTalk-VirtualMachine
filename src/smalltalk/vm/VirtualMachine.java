@@ -88,24 +88,7 @@ public class VirtualMachine {
 				case Bytecode.NIL:
 					ctx.push(nil());
 					break;
-				case Bytecode.SEND:
-					// done on the fly, not to be trusted :)
-					int nArgs = consumeShort(ctx.ip);
-					STObject recv = ctx.stack[ctx.sp - nArgs];
-					int litindex = consumeShort(ctx.ip);
-					String msgName = ctx.compiledBlock.literals[litindex];
-					STCompiledBlock blk = recv.getSTClass().resolveMethod(msgName);
-					// if null, throw MessageNotUnderstood
-					if ( blk.isPrimitive() ) {
-						STObject result = blk.primitive.perform(ctx, nArgs);
-						if ( result!=null ) {
-							ctx.push(result);
-						}
-					}
-					else { // it's a method call
-						// push context
-					}
-					break;
+				// ...
 			}
 			if ( trace ) traceStack(); // show stack *after* execution
 		}
