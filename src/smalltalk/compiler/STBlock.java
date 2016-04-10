@@ -1,6 +1,6 @@
 package smalltalk.compiler;
 
-import com.sun.tools.javac.code.Symbol;
+//import com.sun.tools.javac.code.Symbol;
 import org.antlr.symtab.MethodSymbol;
 import org.antlr.symtab.Scope;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -19,7 +19,7 @@ import smalltalk.vm.primitive.STMetaClassObject;
  *  Block/method symbols also keep a reference to an {@link STCompiledBlock}
  *  object that results from compilation. The VM collects these compiled
  *  blocks and creates {@link STMetaClassObject} objects for each
- *  {@link Symbol.ClassSymbol}.
+ *  {@link //Symbol.ClassSymbol}.
  *
  *  In some sense, a block should subclass a method symbol instead of
  *  method subclassing block. But, method is somehow a "larger" concept
@@ -66,9 +66,16 @@ public class STBlock extends MethodSymbol {
 		return getName();
 	}
 
-	public int nargs() { return 0; }
+	public int nargs() {
+		if(compiledBlock != null)
+			return compiledBlock.nargs;
+		else
+			return 0;
+	}
 
-	public int nlocals() { return 0; }
+	public int nlocals() {
+		return compiledBlock.nlocals;
+	}
 
 	/** Given the name of a local variable or argument, return the index from 0.
 	 *  The arguments come first and then the locals. For example,

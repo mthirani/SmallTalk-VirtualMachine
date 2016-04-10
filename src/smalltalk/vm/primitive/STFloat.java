@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 public class STFloat extends STObject {
 	public final float v;
 
-	STFloat(VirtualMachine vm, float v) {
+	public STFloat(VirtualMachine vm, float v) {
 		super(vm.lookupClass("Float"));
 		this.v = v;
 	}

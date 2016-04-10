@@ -6,7 +6,7 @@ import smalltalk.vm.VirtualMachine;
 public class STInteger extends STObject {
 	public final int v;
 
-	STInteger(VirtualMachine vm, int v) {
+	public STInteger(VirtualMachine vm, int v) {
 		super(vm.lookupClass("Integer"));
 		this.v = v;
 	}

@@ -6,7 +6,7 @@ import smalltalk.vm.VirtualMachine;
 public class STBoolean extends STObject {
 	public final boolean b;
 
-	STBoolean(VirtualMachine vm, boolean b) {
+	public STBoolean(VirtualMachine vm, boolean b) {
 		super(vm.lookupClass("Boolean"));
 		this.b = b;
 	}

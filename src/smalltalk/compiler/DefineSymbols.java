@@ -21,7 +21,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void enterClassDef(@NotNull SmalltalkParser.ClassDefContext ctx) {
+	public void enterClassDef(SmalltalkParser.ClassDefContext ctx) {
 		String className = ctx.ID(0).getText();
 		String superClassName = null;
 		if ( ctx.ID(1)!=null ) {
@@ -51,12 +51,12 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void exitClassDef(@NotNull SmalltalkParser.ClassDefContext ctx) {
+	public void exitClassDef(SmalltalkParser.ClassDefContext ctx) {
 		popScope();
 	}
 
 	@Override
-	public void enterMain(@NotNull SmalltalkParser.MainContext ctx) {
+	public void enterMain(SmalltalkParser.MainContext ctx) {
 		if ( ctx.body().getChildCount()==0 ) return;
 		// pretend user defined "class MainClass [main [...]]"
 		// define MainClass
@@ -64,7 +64,6 @@ public class DefineSymbols extends SmalltalkBaseListener {
 		ctx.classScope = cl;
 		currentScope.define(cl);
 		pushScope(cl);
-
 		// define main method
 		STMethod m = compiler.createMethod("main", ctx);
 		ctx.scope = m;
@@ -74,38 +73,38 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void exitMain(@NotNull SmalltalkParser.MainContext ctx) {
+	public void exitMain(SmalltalkParser.MainContext ctx) {
 		if ( ctx.body().getChildCount()==0 ) return;
 		popScope(); // pop main method
 		popScope(); // pop MainClass
 	}
 
 	@Override
-	public void exitClassMethod(@NotNull SmalltalkParser.ClassMethodContext ctx) {
+	public void exitClassMethod(SmalltalkParser.ClassMethodContext ctx) {
 		ctx.method().scope.isClassMethod = true;
 	}
 
 	@Override
-	public void enterNamedMethod(@NotNull SmalltalkParser.NamedMethodContext ctx) {
+	public void enterNamedMethod(SmalltalkParser.NamedMethodContext ctx) {
 		ctx.methodBlock().selector = ctx.ID().getText();
 		ctx.methodBlock().args = Collections.emptyList();
 	}
 
 	@Override
-	public void enterOperatorMethod(@NotNull final SmalltalkParser.OperatorMethodContext ctx) {
+	public void enterOperatorMethod(final SmalltalkParser.OperatorMethodContext ctx) {
 		ctx.methodBlock().selector = ctx.bop().getText();
 		ctx.methodBlock().args = new ArrayList<String>(){{add(ctx.ID().getText());}};
 	}
 
 	@Override
-	public void enterKeywordMethod(@NotNull SmalltalkParser.KeywordMethodContext ctx) {
+	public void enterKeywordMethod(SmalltalkParser.KeywordMethodContext ctx) {
 		List<String> vars = getTextValues(ctx.KEYWORD());
 		ctx.methodBlock().selector = Utils.join(vars, "");
 		ctx.methodBlock().args = getTextValues(ctx.ID());
 	}
 
 	@Override
-	public void enterSmalltalkMethodBlock(@NotNull SmalltalkParser.SmalltalkMethodBlockContext ctx) {
+	public void enterSmalltalkMethodBlock(SmalltalkParser.SmalltalkMethodBlockContext ctx) {
 		SmalltalkParser.MethodContext methodNode =
 			(SmalltalkParser.MethodContext) Utils.getAncestor(ctx, SmalltalkParser.RULE_method);
 		Symbol existingSymbol = currentScope.getSymbol(ctx.selector);
@@ -124,7 +123,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void enterPrimitiveMethodBlock(@NotNull SmalltalkParser.PrimitiveMethodBlockContext ctx) {
+	public void enterPrimitiveMethodBlock(SmalltalkParser.PrimitiveMethodBlockContext ctx) {
 		if ( currentScope.getSymbol(ctx.selector)!=null ) {
 			compiler.error("redefinition of primitive "+ctx.selector+" in "+currentScope.toQualifierString(">>"));
 		}
@@ -134,7 +133,8 @@ public class DefineSymbols extends SmalltalkBaseListener {
 		STMethod m =
 			compiler.createPrimitiveMethod((STClass) currentScope, ctx.selector, primitiveName,
 										   methodNode);
-		currentScope.define(m);
+		if(((STClass) currentScope).resolveMethod(m.getName()).getName() == null)
+			currentScope.define(m);
 		compiler.defineArguments(m, ctx.args);
 		methodNode.scope = m;
 		currentMethod = m;
@@ -142,7 +142,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void exitSmalltalkMethodBlock(@NotNull SmalltalkParser.SmalltalkMethodBlockContext ctx) {
+	public void exitSmalltalkMethodBlock(SmalltalkParser.SmalltalkMethodBlockContext ctx) {
 		SmalltalkParser.MethodContext methodNode =
 			(SmalltalkParser.MethodContext) Utils.getAncestor(ctx, SmalltalkParser.RULE_method);
 		if ( methodNode.scope != null ) {
@@ -151,7 +151,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void enterFullBody(@NotNull SmalltalkParser.FullBodyContext ctx) {
+	public void enterFullBody(SmalltalkParser.FullBodyContext ctx) {
 		if ( ctx.localVars()!=null ) {
 			List<String> vars = getTextValues(ctx.localVars().ID());
 			compiler.defineLocals(currentScope, vars);
@@ -159,7 +159,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void enterEmptyBody(@NotNull SmalltalkParser.EmptyBodyContext ctx) {
+	public void enterEmptyBody(SmalltalkParser.EmptyBodyContext ctx) {
 		if ( ctx.localVars()!=null ) {
 			List<String> vars = getTextValues(ctx.localVars().ID());
 			compiler.defineLocals(currentScope, vars);
@@ -167,7 +167,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void enterBlock(@NotNull SmalltalkParser.BlockContext ctx) {
+	public void enterBlock(SmalltalkParser.BlockContext ctx) {
 		List<String> args = Collections.emptyList();
 		if ( ctx.blockArgs()!=null && ctx.blockArgs().ID()!=null ) {
 			args = getTextValues(ctx.blockArgs().ID());
@@ -180,7 +180,7 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	@Override
-	public void exitBlock(@NotNull SmalltalkParser.BlockContext ctx) {
+	public void exitBlock(SmalltalkParser.BlockContext ctx) {
 		popScope();
 	}
 
@@ -189,17 +189,10 @@ public class DefineSymbols extends SmalltalkBaseListener {
 	}
 
 	public void pushScope(Scope scope) {
-//		System.out.println("push " + scope.getName());
 		currentScope = scope;
 	}
 
 	public void popScope() {
-//		if ( currentScope.getEnclosingScope()!=null ) {
-//			System.out.println("popping from " + currentScope.getName() + " to " + currentScope.getEnclosingScope().getName());
-//		}
-//		else {
-//			System.out.println("popping from " + currentScope.getName() + " to null");
-//		}
 		currentScope = currentScope.getEnclosingScope();
 	}
 }

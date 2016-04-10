@@ -1,10 +1,10 @@
 package smalltalk.vm;
 
+import smalltalk.compiler.STClass;
 import smalltalk.compiler.STMethod;
 import smalltalk.compiler.STSymbolTable;
 import smalltalk.vm.primitive.STMetaClassObject;
 import smalltalk.vm.primitive.STObject;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,11 +17,13 @@ import java.util.Map;
 public class SystemDictionary {
 	// All metaclass info and any predefined global objects like nil, true, ...
 	protected final Map<String,STObject> objects = new LinkedHashMap<>();
-
+	public STSymbolTable stSymbolTable;
 	public final VirtualMachine vm;
 
-	public SystemDictionary(VirtualMachine vm) {
+	public SystemDictionary(VirtualMachine vm, STSymbolTable stSymbolTable) {
 		this.vm = vm;
+		this.stSymbolTable = stSymbolTable;
+		initPredefinedObjects();
 	}
 
 	/** Convert the symbol table with classes, methods, and compiled code
@@ -37,20 +39,30 @@ public class SystemDictionary {
 
 	/** Define predefined object Transcript. */
 	public void initPredefinedObjects() {
+		/*STClass stclass = new STClass("TranscriptStream", "", stSymbolTable);
+		STMetaClassObject stMetaClassObject = new STMetaClassObject(vm, stclass);
+		objects.put("TranscriptStream", stMetaClassObject);*/
 	}
 
 	public STObject lookup(String id) {
-		return null;
+		return objects.get(id);
 	}
 
 	public STMetaClassObject lookupClass(String id) {
-		return null;
+		if(id.equals("TranscriptStream")){
+			STClass stclass = new STClass("TranscriptStream", "", stSymbolTable);
+			STMetaClassObject stMetaClassObject = new STMetaClassObject(vm, stclass);
+			return stMetaClassObject;
+		}
+		return objects.get(id).getSTClass();
 	}
 
 	public void defineMetaObject(String name, STMetaClassObject meta) {
 	}
 
-	public Collection<STObject> getObjects() { return null; }
+	public Collection<STObject> getObjects() { return this.objects.values(); }
 
-	public void define(String id, STObject v) { }
+	public void define(String id, STObject v) {
+		objects.put(id, v);
+	}
 }

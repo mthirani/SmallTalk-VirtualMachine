@@ -1,6 +1,6 @@
 grammar Smalltalk;
 
-@header {import org.antlr.symtab.*;}
+@header {import org.antlr.symtab.*;import smalltalk.compiler.*;}
 
 file: classDef* main EOF ;
 

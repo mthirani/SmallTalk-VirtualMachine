@@ -34,7 +34,7 @@ public class STObject {
 
 	/** What kind of object am I? Analogous to Java's Object.getClass() */
 	public STMetaClassObject getSTClass() {
-		return null;
+		return metaclass;
 	}
 
 	/** Analogous to Java's toString() */
@@ -56,7 +56,7 @@ public class STObject {
 		// index of 1st arg on opnd stack; use only if arg(s) present for primitive
 		int firstArg = ctx.sp - nArgs + 1; 
 		STObject receiver = ctx.stack[firstArg-1];
-		STObject result;
+		STObject result = null;
 		switch ( primitive ) {
 			case Object_ASSTRING:
 				ctx.sp--; // pop receiver

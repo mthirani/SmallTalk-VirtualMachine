@@ -1,6 +1,7 @@
 package smalltalk.compiler;
 
 import org.antlr.symtab.ClassSymbol;
+import org.antlr.symtab.Symbol;
 
 public class STClass extends ClassSymbol {
 	public final STSymbolTable symtab; // to (lazily) look up superclasses

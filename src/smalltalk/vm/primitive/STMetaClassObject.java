@@ -7,6 +7,8 @@ import smalltalk.compiler.STClass;
 import smalltalk.compiler.STMethod;
 import smalltalk.vm.VirtualMachine;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlElementDecl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +25,17 @@ public class STMetaClassObject extends STObject {
 	public final VirtualMachine vm;
 	public final String name;
 	public final STMetaClassObject superClass;
-
 	public final List<String> fields;
 	public final Map<String,STCompiledBlock> methods;
 
 	public STMetaClassObject(VirtualMachine vm, STClass classSymbol) {
 		super(null); // metaclass for a metaclass is 'this' but 'this' doesn't exist yet; see override of getSTClass()
 		this.vm = vm;
+		if(classSymbol.getSuperClassScope() != null)
+			this.superClass = new STMetaClassObject(vm, (STClass) classSymbol.getSuperClassScope());
+		else
+			this.superClass = null;
+		this.name = classSymbol.getName();
 		fields = new ArrayList<>();
 		// make space for ALL fields, including inherited ones
 		for (FieldSymbol f : classSymbol.getFields()) {
@@ -68,6 +74,7 @@ public class STMetaClassObject extends STObject {
 	public String getName() { return name; }
 
 	public STCompiledBlock resolveMethod(String name) {
+		return methods.get(name);
 	}
 
 	public int getNumberOfFields() {

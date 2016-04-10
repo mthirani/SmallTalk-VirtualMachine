@@ -39,7 +39,7 @@ public class BlockContext {
 	public static final BlockContext RETURNED = new BlockContext();
 
 	/** In what VM am I executing? */
-	public final VirtualMachine vm;
+	public VirtualMachine vm;		//final
 
 	// ----- STATE OF EXECUTION -----
 
@@ -50,13 +50,13 @@ public class BlockContext {
 	public BlockContext invokingContext;
 
 	/** The receiver of the message that resulted in this context */
-	public final STObject receiver;
+	public STObject receiver;		//final
 
 	/** The compiled code associated with this context */
-	public final STCompiledBlock compiledBlock;
+	public STCompiledBlock compiledBlock;		//final
 
 	/** All arguments and local variables associated with this block */
-	public final STObject[] locals;
+	public STObject[] locals;		//final
 
 	/** The instruction pointer that points into compiledBlock.bytcodes */
 	public int ip = 0;

@@ -2,19 +2,10 @@ package smalltalk.vm;
 
 import org.antlr.symtab.ClassSymbol;
 import org.antlr.symtab.Symbol;
+import org.antlr.symtab.Utils;
 import smalltalk.compiler.STClass;
 import smalltalk.compiler.STSymbolTable;
-import smalltalk.vm.exceptions.BlockCannotReturn;
-import smalltalk.vm.exceptions.IndexOutOfRange;
-import smalltalk.vm.exceptions.InternalVMException;
-import smalltalk.vm.exceptions.MessageNotUnderstood;
-import smalltalk.vm.exceptions.MismatchedBlockArg;
-import smalltalk.vm.exceptions.StackUnderflow;
-import smalltalk.vm.exceptions.TypeError;
-import smalltalk.vm.exceptions.UndefinedGlobal;
-import smalltalk.vm.exceptions.UnknownClass;
-import smalltalk.vm.exceptions.UnknownField;
-import smalltalk.vm.exceptions.VMException;
+import smalltalk.vm.exceptions.*;
 import smalltalk.vm.primitive.BlockContext;
 import smalltalk.vm.primitive.BlockDescriptor;
 import smalltalk.vm.primitive.Primitive;
@@ -26,6 +17,10 @@ import smalltalk.vm.primitive.STMetaClassObject;
 import smalltalk.vm.primitive.STNil;
 import smalltalk.vm.primitive.STObject;
 import smalltalk.vm.primitive.STString;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /** A VM for a subset of Smalltalk.
  *
@@ -49,11 +44,10 @@ public class VirtualMachine {
 	public boolean trace = false;
 
 	public VirtualMachine(STSymbolTable symtab) {
-		systemDict = new SystemDictionary(this);
+		systemDict = new SystemDictionary(this, symtab);
 		for (Symbol s : symtab.GLOBALS.getSymbols()) {
 			if ( s instanceof ClassSymbol ) {
-				systemDict.define(s.getName(),
-								  new STMetaClassObject(this,(STClass)s));
+				systemDict.define(s.getName(), new STMetaClassObject(this,(STClass)s));
 			}
 		}
 		STObject transcript = new STObject(systemDict.lookupClass("TranscriptStream"));
@@ -66,6 +60,8 @@ public class VirtualMachine {
 	/** look up MainClass>>main and execute it */
 	public STObject execMain() {
 		// ...
+		STObject mainObject = null;
+		STCompiledBlock main = null;
 		return exec(mainObject,main);
 	}
 
@@ -91,6 +87,7 @@ public class VirtualMachine {
 				// ...
 			}
 			if ( trace ) traceStack(); // show stack *after* execution
+			break;
 		}
 		return ctx!=null ? ctx.receiver : null;
 	}
@@ -152,6 +149,12 @@ public class VirtualMachine {
 		return receiverObj;  // leave receiver on stack for primitive methods
 	}
 
+	public void assertNumOperands(int i) {
+	}
+
+	private void assertEqualBackingTypes(STObject r, String t){
+	}
+
 	public STMetaClassObject lookupClass(String id) {
 		return systemDict.lookupClass(id);
 	}
@@ -165,23 +168,23 @@ public class VirtualMachine {
 	}
 
 	public STObject newInstance(STMetaClassObject metaclass) {
-		return null;
+		return new STObject(metaclass);
 	}
 
 	public STInteger newInteger(int v) {
-		return null;
+		return new STInteger(this, v);
 	}
 
 	public STFloat newFloat(float v) {
-		return null;
+		return new STFloat(this, v);
 	}
 
 	public STString newString(String s) {
-		return null;
+		return new STString(this, s);
 	}
 
 	public STBoolean newBoolean(boolean b) {
-		return null;
+		return new STBoolean(this, b);
 	}
 
 	public STNil nil() {
@@ -241,7 +244,7 @@ public class VirtualMachine {
 		return stack.toString();
 	}
 
-	String pContextWorkStack(BlockContext ctx) {
+	public String pContextWorkStack(BlockContext ctx) {
 		StringBuilder buf = new StringBuilder();
 		buf.append("[");
 		for (int i=0; i<=ctx.sp; i++) {
@@ -252,7 +255,7 @@ public class VirtualMachine {
 		return buf.toString();
 	}
 
-	String pLocals(BlockContext ctx) {
+	public String pLocals(BlockContext ctx) {
 		StringBuilder buf = new StringBuilder();
 		buf.append("[");
 		for (int i=0; i<ctx.locals.length; i++) {

@@ -17,7 +17,7 @@ import smalltalk.vm.VirtualMachine;
  */
 public class BlockDescriptor extends STObject {
 	/** This object is a descriptor for which compiled block? */
-	public final STCompiledBlock block;
+	public STCompiledBlock block;		//final
 
 	/** The immediately surrounding/enclosing method or block.
 	 *  If this block is a block within the outermost block (i.e., the method),
@@ -25,7 +25,7 @@ public class BlockDescriptor extends STObject {
 	 *
 	 *  See {@link BlockContext#enclosingContext} for more details.
 	 */
-	public final BlockContext enclosingContext;
+	public BlockContext enclosingContext;	//final
 
 	/** A shortcut up the enclosingContext chain to the method in which the
 	 *  block associated with this context is defined.  We need to locate
@@ -36,7 +36,7 @@ public class BlockDescriptor extends STObject {
 	 *
 	 *  See {@link BlockContext#enclosingMethodContext} for more details.
 	 */
-	public final BlockContext enclosingMethodContext;
+	public BlockContext enclosingMethodContext;	//final
 
 	/** The receiver of the method that created this block descriptor.
 	 *  SELF instruction in block passed to another method must return
@@ -53,11 +53,13 @@ public class BlockDescriptor extends STObject {
 	 * 	bar: blk
 	 * 		blk value
 	 */
-	public final STObject receiver;
+	public STObject receiver;		//final
 
 	// visible only to the package so no one else can randomly create these objects
 	BlockDescriptor(STCompiledBlock blk, BlockContext activeContext) {
 		super(activeContext.vm.lookupClass("BlockDescriptor"));
+		enclosingContext = activeContext;
+		block = blk;
 	}
 
 	public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {

@@ -17,7 +17,7 @@ import smalltalk.vm.VirtualMachine;
  *
  *  To define a new primitive, add enum element here pointing to static
  *  perform method.  The perform() method returns a value that {@link
- *  smalltalk.vm.VirtualMachine#sendMessage} pushes onto stack if
+ *  //smalltalk.vm.VirtualMachine#sendMessage} pushes onto stack if
  *  non-null.
  */
 public enum Primitive {

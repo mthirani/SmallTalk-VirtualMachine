@@ -78,18 +78,18 @@ public class STCompiledBlock {
 	public STCompiledBlock[] blocks;
 
 	/** The fixed number of arguments taken by this method */
-	public final int nargs;
+	public int nargs;			//final
 
 	/** The number of local variables defined within the block, not including the arguments */
-	public final int nlocals;
+	public int nlocals;			//final
 
 	/** A pointer to the primitive implementing the method, if this field
 	 *  is non-null.
  	 */
-	public final Primitive primitive;
+	public Primitive primitive;		//final
 
 	/** True if method was defined as class method in Smalltalk */
-	public final boolean isClassMethod;
+	public boolean isClassMethod;		//final
 
 	public STCompiledBlock(STBlock blk) {
 	}

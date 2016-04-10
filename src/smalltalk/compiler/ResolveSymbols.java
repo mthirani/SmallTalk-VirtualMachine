@@ -9,19 +9,17 @@ import org.antlr.v4.runtime.misc.NotNull;
  *  Check that the left-hand side of assignments are variables. Other
  *  unknown symbols could simply be references to type names that will
  *  be compiled later. Mostly done to verify scopes/symbols in
- *  {@link smalltalk.test.TestIDLookup}.
+ *  {@link //smalltalk.test.TestIDLookup}.
  */
 public class ResolveSymbols extends SetScope {
 	public ResolveSymbols(Compiler compiler) {
 		super(compiler);
 	}
 
-	@Override
 	public void enterId(@NotNull SmalltalkParser.IdContext ctx) {
 		ctx.sym = currentScope.resolve(ctx.getStart().getText());
 	}
 
-	@Override
 	public void enterLvalue(@NotNull SmalltalkParser.LvalueContext ctx) {
 		ctx.sym = checkIDExists(ctx.getStart());
 	}

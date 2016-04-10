@@ -9,7 +9,7 @@ public class STString extends STObject {
 		this(vm, String.valueOf(c));
 	}
 
-	STString(VirtualMachine vm, String s) {
+	public STString(VirtualMachine vm, String s) {
 		super(vm.lookupClass("String"));
 		this.s = s;
 	}
