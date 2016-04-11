@@ -22,19 +22,20 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	public final Compiler compiler;
 	public boolean isClassMethod = false;
 	public LinkedHashMap<String, LinkedHashSet<String>> literals;
-	public LinkedHashMap<String, LinkedHashSet<STCompiledBlock>> compiledBlocks;
+	public HashMap<String, TreeSet<STCompiledBlock>> compiledBlocks;
 	public HashMap<String, Integer> nlocals;
 	public HashMap<String, Integer> nargs;
 	public final Map<Scope,StringTable> blockToStrings = new HashMap<>();
 	public boolean isPrimitive = false;
 	public String primitiveName;
+	public int blockNum;
 
 	public CodeGenerator(Compiler compiler) {
 		this.compiler = compiler;
 		this.currentScope = compiler.symtab.GLOBALS;
 		this.literals = new LinkedHashMap<String, LinkedHashSet<String>>();
 		this.nlocals = new HashMap<String, Integer>();
-		this.compiledBlocks = new LinkedHashMap<String, LinkedHashSet<STCompiledBlock>>();
+		this.compiledBlocks = new HashMap<String, TreeSet<STCompiledBlock>>();
 		this.nargs =  new HashMap<String, Integer>();
 	}
 
@@ -75,6 +76,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			code = code.join(Compiler.push_self());
 			code = code.join(Compiler.method_return());
 			ctx.scope.compiledBlock = getCompiledBlock(ctx.scope, code);
+			popScope();
 		}
 
 		return Code.None;
@@ -101,39 +103,52 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	@Override
 	public Code visitBlock(SmalltalkParser.BlockContext ctx) {
 		pushScope(ctx.scope);
-		int blockNum;
+		int temp = blockNum++;
+		String scopeName = extractScopeName(ctx.scope);
 		Code e= Code.None;
 		if(ctx.blockArgs() != null)
 			e = visit(ctx.blockArgs());
 		Code code = e.join(visit(ctx.body()));
 		code = code.join(Compiler.push_block_return());
-		/***** Extract the scope name ****/
-		String scopeName = extractScopeName(ctx.scope);
-
+		ctx.scope.compiledBlock = getCompiledBlock(ctx.scope, code);
 		/***** Map/ Add the Compiled Block code in the specified scope block ****/
 		if(compiledBlocks.containsKey(scopeName)){
-			blockNum = compiledBlocks.get(scopeName).size();
 			compiledBlocks.get(scopeName).add(getCompiledBlock(ctx.scope, code));
 		}
 		else{
-			LinkedHashSet<STCompiledBlock> stCompiledBlocks = new LinkedHashSet<>();
+			TreeSet<STCompiledBlock> stCompiledBlocks = new TreeSet<>();
 			stCompiledBlocks.add(getCompiledBlock(ctx.scope, code));
 			compiledBlocks.put(scopeName, stCompiledBlocks);
-			blockNum = 0;
 		}
-		ctx.scope.compiledBlock = getCompiledBlock(ctx.scope, code);
 		popScope();
 
-		return Compiler.push_block(blockNum);
+		return Compiler.push_block(temp);
+	}
+
+	@Override
+	public Code visitUnarySuperMsgSend(SmalltalkParser.UnarySuperMsgSendContext ctx) {
+		setLiterals(currentScope.getName(), ctx.ID().getText());
+		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
+		Code code = Compiler.push_self();
+		code = code.join(Compiler.push_send_super(0, index));
+
+		return code;
+	}
+
+	@Override
+	public Code visitClassMethod(SmalltalkParser.ClassMethodContext ctx) {
+		isClassMethod = true;
+		Code code = visit(ctx.method());
+		isClassMethod = false;
+
+		return code;
 	}
 
 	@Override
 	public Code visitClassDef(SmalltalkParser.ClassDefContext ctx) {
-		isClassMethod = true;
 		pushScope(ctx.scope);
 		Code code = visitChildren(ctx);
 		popScope();
-		isClassMethod = false;
 
 		return code;
 	}
@@ -141,6 +156,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	@Override
 	public Code visitOperatorMethod(SmalltalkParser.OperatorMethodContext ctx) {
 		isPrimitive = false;
+		blockNum = 0;
 		pushScope(ctx.scope);
 		nlocals.put(ctx.scope.getName(), 0);
 		Code code = visit(ctx.methodBlock());
@@ -153,6 +169,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	@Override
 	public Code visitNamedMethod(SmalltalkParser.NamedMethodContext ctx) {
 		isPrimitive = false;
+		blockNum = 0;
 		pushScope(ctx.scope);
 		nlocals.put(ctx.scope.getName(), 0);
 		Code code = visit(ctx.methodBlock());
@@ -160,6 +177,30 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		popScope();
 
 		return Code.None;
+	}
+
+	@Override
+	public Code visitKeywordMethod(SmalltalkParser.KeywordMethodContext ctx) {
+		isPrimitive = false;
+		blockNum = 0;
+		pushScope(ctx.scope);
+		nlocals.put(ctx.scope.getName(), 0);
+		Code code = visit(ctx.methodBlock());
+		nargs.put(ctx.scope.getName(), ctx.ID().size());
+		ctx.scope.compiledBlock = getCompiledBlock(ctx.scope, code);
+		popScope();
+
+		return Code.None;
+	}
+
+	@Override
+	public Code visitUnaryMsgSend(SmalltalkParser.UnaryMsgSendContext ctx) {
+		setLiterals(currentScope.getName(), ctx.ID().getText());
+		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
+		Code code = visit(ctx.unaryExpression());
+		code = code.join(Compiler.push_send(0, index));
+
+		return code;
 	}
 
 	@Override
@@ -180,11 +221,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitPrimitiveMethodBlock(@NotNull SmalltalkParser.PrimitiveMethodBlockContext ctx) {
-		/*STPrimitiveMethod p = (STPrimitiveMethod)currentScope.resolve(ctx.selector);
-		STCompiledBlock blk = new STCompiledBlock(p);
-		primitiveName = ctx.SYMBOL().getText(); // e.g., Integer_ADD
-		primitiveName = primitiveName.substring(1,primitiveName.length());
-		Primitive primitive = Primitive.valueOf(primitiveName);*/
 		isPrimitive = true;
 		nargs.put(currentScope.getName(), ctx.args.size());
 		primitiveName = ctx.selector;
@@ -200,6 +236,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		return Code.None;
 	}
 
+
 	@Override
 	public Code visitKeywordSend(SmalltalkParser.KeywordSendContext ctx) {
 		int index;
@@ -208,7 +245,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			code = code.join(visit(bec));
 		if(ctx.args.size() != 0){
 			int args = ctx.args.size();
-//			String scopeName = extractScopeName(currentScope);
 			String scopeName = currentScope.getName();
 			String keywords = "";
 			for(int i=0; i<ctx.KEYWORD().size(); i++){
@@ -238,7 +274,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	@Override
 	public Code visitBop(SmalltalkParser.BopContext ctx) {
 		Code code = Code.None;
-		//String scopeName = extractScopeName(currentScope);		//Uncomment this one
 		String scopeName = currentScope.getName();
 		setLiterals(scopeName, ctx.getText());
 		int index = findIndex(literals.get(scopeName), ctx.getText());
@@ -249,6 +284,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitSmalltalkMethodBlock(SmalltalkParser.SmalltalkMethodBlockContext ctx) {
+
 		SmalltalkParser.MethodContext methodNode = (SmalltalkParser.MethodContext)ctx.getParent();
 		Code code = visitChildren(ctx);
 		if ( compiler.genDbg ) { // put dbg in front of push_self
@@ -276,6 +312,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			stCompiledBlock.name = scope.getName();
 			stCompiledBlock.qualifiedName = scope.getQualifiedName(">>");
 		}
+		if(isClassMethod)
+			stCompiledBlock.name = "static " + stCompiledBlock.name;
 		if(nlocals.get(scope.getName()) != null){
 			stCompiledBlock.nlocals = nlocals.get(scope.getName());
 		}
@@ -294,7 +332,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		else
 			stCompiledBlock.literals = new String[0];
 		if(compiledBlocks.get(scope.getName()) != null){
-			LinkedHashSet<STCompiledBlock> stCompiledBlocks = compiledBlocks.get(scope.getName());
+			TreeSet<STCompiledBlock> stCompiledBlocks = compiledBlocks.get(scope.getName());
 			stCompiledBlock.blocks = new STCompiledBlock[stCompiledBlocks.size()];
 			i = 0;
 			for(STCompiledBlock stCompiledBlock1: stCompiledBlocks){
@@ -334,17 +372,15 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 				int i = s.getInsertionOrderNumber();
 				int d = 0;				//this is delta from current scope to s.scope
 				while(!s.getScope().equals(scope)){
-					scope = currentScope.getEnclosingScope();
+					scope = scope.getEnclosingScope();
 					d++;
 				}
 				return Compiler.push_store_local(d, i);
 			}
 			else{
-
+				return Code.None;
 			}
 		}
-
-		return Code.None;
 	}
 
 	@Override
@@ -353,8 +389,8 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			int local = ctx.sym.getInsertionOrderNumber();
 			Scope scope = currentScope;
 			int d = 0;
-			if(!ctx.sym.getScope().equals(scope)){
-				scope = currentScope.getEnclosingScope();
+			while(!ctx.sym.getScope().equals(scope)){
+				scope = scope.getEnclosingScope();
 				d++;
 			}
 
@@ -368,12 +404,18 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			{
 				if(ctx.sym instanceof STArg){
 					int local = ctx.sym.getInsertionOrderNumber();
-					return Compiler.push_local(0, local);
+					Scope scope = currentScope;
+					int d = 0;
+					while(!ctx.sym.getScope().equals(scope)){
+						scope = scope.getEnclosingScope();
+						d++;
+					}
+
+					return Compiler.push_local(d, local);
 				}
 				else
 				{
 					int index = 0;
-					//String scopeName = extractScopeName(currentScope);
 					String scopeName = currentScope.getName();
 					setLiterals(scopeName, ctx.ID().getText());
 					index = findIndex(literals.get(scopeName), ctx.ID().getText());
@@ -394,16 +436,12 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitLiteral(SmalltalkParser.LiteralContext ctx) {
-		/***** Extract the scope name ****/
-		//String scopeName = extractScopeName(currentScope);		//Uncomment this one
 		String scopeName = currentScope.getName();
 
 		if(ctx.getText().equals("nil"))
 			return Compiler.push_nil();
 		else if(ctx.getText().equals("self"))
 			return Compiler.push_self();
-		else if(ctx.getText().equals("super"))
-			return Compiler.push_send_super();
 		else if(ctx.getText().equals("true"))
 			return Compiler.push_true();
 		else if(ctx.getText().equals("false"))

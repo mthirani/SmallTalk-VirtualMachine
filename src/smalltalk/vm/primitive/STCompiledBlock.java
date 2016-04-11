@@ -24,7 +24,8 @@ import smalltalk.vm.Bytecode;
  *  This object has a reference to the lexically enclosing class' metaclass,
  *  which is set by {@link STMetaClassObject} during construction.
  */
-public class STCompiledBlock {
+public class STCompiledBlock implements Comparable<STCompiledBlock>{
+
 	public static final String testStringTemplate =
 		"name: <name>\n" +
 		"qualifiedName: <qualifiedName>\n" +
@@ -115,5 +116,9 @@ public class STCompiledBlock {
 						 Utils.map(blocks, STCompiledBlock::serialize)
 					);
 		return template.render();
+	}
+
+	public int compareTo(STCompiledBlock obj2){
+		return this.name.compareTo(obj2.name);
 	}
 }

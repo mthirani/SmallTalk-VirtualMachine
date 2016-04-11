@@ -266,6 +266,40 @@ public class TestCodeGen extends BaseTest {
 		assertEquals(expecting, result);
 	}
 
+	@Test public void testInheritFieldAndHaveField() {
+		String input =
+				"class T [\n" +
+						"    | x |\n" +
+						"]\n" +
+						"class U : T [\n" +
+						"    | y |\n" +
+						"    value [ ^x + y ]\n" +
+						"]\n";
+		String expecting =
+				"name: T\n"+
+						"superClass: \n"+
+						"fields: x\n"+
+						"methods:\n"+
+						"name: U\n"+
+						"superClass: T\n"+
+						"fields: x,y\n"+
+						"methods:\n"+
+						"    name: value\n"+
+						"    qualifiedName: U>>value\n"+
+						"    nargs: 0\n"+
+						"    nlocals: 0\n"+
+						"    literals: '+'\n"+
+						"    0000:  push_field     0\n"+
+						"    0003:  push_field     1\n"+
+						"    0006:  send           1, '+'\n"+
+						"    0011:  return           \n"+
+						"    0012:  pop              \n"+
+						"    0013:  self             \n"+
+						"    0014:  return           \n";
+		String result = compile(input);
+		assertEquals(expecting, result);
+	}
+
 	@Test public void testMethods() {
 		String input =
 			"class T [\n" +

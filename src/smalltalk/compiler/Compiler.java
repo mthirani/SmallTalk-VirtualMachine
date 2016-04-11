@@ -1,5 +1,6 @@
 package smalltalk.compiler;
 
+import org.antlr.symtab.ClassSymbol;
 import org.antlr.symtab.Scope;
 import org.antlr.symtab.Symbol;
 import org.antlr.symtab.VariableSymbol;
@@ -62,7 +63,7 @@ public class Compiler {
 	public static Code push_store_field(int i) 				{ return Code.of(Bytecode.STORE_FIELD).join(Utils.shortToBytes(i)); }
 	public static Code push_store_local(int d, int i) 				{ return Code.of(Bytecode.STORE_LOCAL).join(Utils.shortToBytes(d)).join(Utils.shortToBytes(i)); }
 	public static Code push_send(int n, int i) 				{ return Code.of(Bytecode.SEND).join(Utils.shortToBytes(n)).join(Utils.shortToBytes(i)); }
-	public static Code push_send_super() 				{ return Code.of(Bytecode.SEND_SUPER); }
+	public static Code push_send_super(int n, int i) 				{ return Code.of(Bytecode.SEND_SUPER).join(Utils.shortToBytes(n)).join(Utils.shortToBytes(i)); }
 	public static Code push_block(int blkNum) 				{ return Code.of(Bytecode.BLOCK).join(Utils.shortToBytes(blkNum)); }
 	public static Code push_block_return() 				{ return Code.of(Bytecode.BLOCK_RETURN); }
 	public static Code push_char(char c)			{ return Code.of(Bytecode.PUSH_CHAR).join(Utils.shortToBytes(c)); }
@@ -84,9 +85,18 @@ public class Compiler {
 	public void defineFields(STClass cl, List<String> instanceVars)
 	{
 		if(instanceVars != null){
+
+			int getIndex = 0;
+			ClassSymbol c = cl;
+			while(c.getSuperClassScope() != null){
+				getIndex = getIndex + c.getSuperClassScope().getFields().size();
+				c = c.getSuperClassScope();
+			}
 			for(String insVar: instanceVars){
 				STField var = new STField(insVar);
 				cl.define(var);
+				var.setInsertionOrderNumber(getIndex);
+				getIndex++;
 			}
 		}
 	}
