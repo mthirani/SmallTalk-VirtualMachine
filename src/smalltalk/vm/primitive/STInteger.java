@@ -113,11 +113,6 @@ public class STInteger extends STObject {
 				ctx.sp--; // pop receiver
 				result = new STBoolean(vm, receiverGe.v >= ((STInteger)ropnd).v);
 				break;
-			case Object_ASSTRING:
-				STInteger receiver = (STInteger)receiverObj;
-				ctx.sp--;
-				result = receiver.asString();
-				break;
 		}
 		return result;
 	}

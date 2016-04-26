@@ -1,14 +1,9 @@
 package smalltalk.vm.primitive;
 
-import org.antlr.symtab.Utils;
 import smalltalk.vm.VirtualMachine;
 
-import java.util.Arrays;
-import java.util.List;
-
-/** */
 public class STArray extends STObject {
-	public STObject[] elements;		//final
+	public STObject[] elements;
 
 	public STArray(VirtualMachine vm, int n, STObject fill) {
 		super(vm.lookupClass("Array"));
@@ -50,10 +45,6 @@ public class STArray extends STObject {
 		STObject receiver = ctx.stack[firstArg-1];
 		STObject result = null;
 		switch ( primitive ) {
-			case Object_ASSTRING:
-				ctx.sp--; // pop receiver
-				result = receiver.asString();
-				break;
 			case Array_Class_NEW:
 				if(nArgs == 0){
 					ctx.sp--;

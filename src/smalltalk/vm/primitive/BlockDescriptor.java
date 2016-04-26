@@ -36,7 +36,7 @@ public class BlockDescriptor extends STObject {
 	 *
 	 *  See {@link BlockContext#enclosingMethodContext} for more details.
 	 */
-	public BlockContext enclosingMethodContext;	//final
+	public BlockContext enclosingMethodContext;
 
 	/** The receiver of the method that created this block descriptor.
 	 *  SELF instruction in block passed to another method must return

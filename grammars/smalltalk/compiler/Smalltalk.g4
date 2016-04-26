@@ -130,7 +130,7 @@ COMMENT
 
 CHAR:	'$' ~('@'|'\n'|'\t'|' ') ;
 
-WS	:	(' '|'\t'|'\n')+ -> channel(HIDDEN) ;
+WS	:	(' '|'\t'|'\n'|'\r')+ -> channel(HIDDEN) ;
 
 NUMBER
 	:	'-' NUMBER
@@ -145,6 +145,3 @@ RETURN : '^' ;
 LBRACK : '[' ;
 
 RBRACK : ']' ;
-
-
-

@@ -78,7 +78,6 @@ public class VirtualMachine {
 			int localIndex;
 			if ( trace ) traceInstr(); // show instr first then stack after to show results
 			int op = ctx.compiledBlock.bytecode[ctx.ip];
-			boolean isDBG = false;
 			switch ( op ) {
 				case Bytecode.NIL:
 					ctx.push(nil());
@@ -261,7 +260,6 @@ public class VirtualMachine {
 					break;
 				case Bytecode.DBG:
 					ctx.prev_ip = ctx.ip;
-					isDBG = true;
 					consumeByte(ctx.ip);
 					int fileName = getShort(ctx.ip);
 					ctx.currentFile = ctx.compiledBlock.literals[fileName];
@@ -274,7 +272,7 @@ public class VirtualMachine {
 			}
 			if ( trace ) traceStack(); // show stack *after* execution
 			op = ctx.compiledBlock.bytecode[ctx.ip];
-			if((ctx.sp == -1) && (!isDBG) && (op == Bytecode.RETURN))
+			if((ctx.sp == -1) && (op == Bytecode.RETURN))
 				break;
 		}
 		return ctx!=null ? ctx.receiver : null;
@@ -324,11 +322,9 @@ public class VirtualMachine {
 	}
 
 	private STCompiledBlock getSTCompiledBlock(STObject recieve, String literal) {
-		//STMetaClassObject s;
 		if(!recieve.getSTClass().getName().equals("MainClass")){
 			if(this.lookupClass(recieve.getSTClass().getName()).methods.get(literal) != null)
 				return this.lookupClass(recieve.getSTClass().getName()).methods.get(literal);
-			/*** Newly Added ***/
 			else{
 				if(recieve.metaclass != null){
 					STMetaClassObject s = this.lookupClass(recieve.metaclass.superClass.getName());
@@ -337,7 +333,6 @@ public class VirtualMachine {
 					}
 				}
 			}
-			/*** Newly Added ***/
 		}
 		if(this.lookupClass("Object").methods.get(literal) != null){
 			return this.lookupClass("Object").methods.get(literal);
@@ -434,8 +429,6 @@ public class VirtualMachine {
 	}
 
 	private Primitive getObjectPrimtive(String literal, int args) {
-		/*if(literal.equals("asString"))
-			return Primitive.Object_ASSTRING;*/
 		if(literal.equals("basicNew"))
 			return Primitive.Object_Class_BASICNEW;
 		if(literal.equals("show:"))
@@ -479,8 +472,6 @@ public class VirtualMachine {
 			return Primitive.String_EQ;
 		if(literal.equals("asArray"))
 			return Primitive.String_ASARRAY;
-		if(literal.equals("+"))
-			return Primitive.Integer_ADD;
 
 		return null;
 	}

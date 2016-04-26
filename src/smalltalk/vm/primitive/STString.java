@@ -30,10 +30,6 @@ public class STString extends STObject {
 				s = receiver.s + new STString(vm, ropnd.toString());
 				result = new STString(vm, s);
 				break;
-			case Object_ASSTRING:
-				ctx.sp--;
-				result = receiver.asString();
-				break;
 			case String_ASARRAY:
 				ropnd = receiver;
 				ctx.sp--;

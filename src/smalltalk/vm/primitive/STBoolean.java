@@ -50,10 +50,6 @@ public class STBoolean extends STObject {
 				else
 					result = vm.newBoolean(true);
 				break;
-			case Object_ASSTRING:
-				ctx.sp--;
-				result = receiver.asString();
-				break;
 		}
 		return result;
 	}

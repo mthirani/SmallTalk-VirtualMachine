@@ -88,11 +88,6 @@ public class STFloat extends STObject {
 				ctx.sp--; // pop receiver
 				result = new STBoolean(vm, receiverGe.v >= ((STFloat)ropnd).v);
 				break;
-			case Object_ASSTRING:
-				STFloat receiver1 = (STFloat)receiverObj;
-				ctx.sp--;
-				result = receiver1.asString();
-				break;
 		}
 		return result;
 	}

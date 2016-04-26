@@ -79,18 +79,18 @@ public class STCompiledBlock implements Comparable<STCompiledBlock>{
 	public STCompiledBlock[] blocks;
 
 	/** The fixed number of arguments taken by this method */
-	public int nargs;			//final
+	public int nargs;
 
 	/** The number of local variables defined within the block, not including the arguments */
-	public int nlocals;			//final
+	public int nlocals;
 
 	/** A pointer to the primitive implementing the method, if this field
 	 *  is non-null.
  	 */
-	public Primitive primitive;		//final
+	public Primitive primitive;
 
 	/** True if method was defined as class method in Smalltalk */
-	public boolean isClassMethod;		//final
+	public boolean isClassMethod;
 
 	public STCompiledBlock(STBlock blk) {
 	}
