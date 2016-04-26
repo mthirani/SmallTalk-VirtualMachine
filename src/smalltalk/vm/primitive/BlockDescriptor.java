@@ -90,7 +90,7 @@ public class BlockDescriptor extends STObject {
 				break;
 			case BlockDescriptor_VALUE_2_ARGS:
 				vm.extractObjs = vm.getSTObjectArgs(ctx, nArgs);
-				ctx.sp -= 3;                                        //1 receiver & 1 argument
+				ctx.sp -= 3;                                        //1 receiver & 2 arguments
 				if (receiver instanceof BlockDescriptor) {
 					vm.pushctx = new BlockContext(vm, receiver);
 					result = null;
@@ -99,7 +99,7 @@ public class BlockDescriptor extends STObject {
 				break;
 		}
 
-		return null; // no result for block initiation; block just starts executing
+		return null;
 	}
 
 	@Override

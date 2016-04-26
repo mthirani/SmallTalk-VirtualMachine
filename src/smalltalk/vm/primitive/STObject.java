@@ -16,15 +16,11 @@ public class STObject {
 	public final STMetaClassObject metaclass;
 
 	/** Which smalltalk-visible fields are defined all the way up the superclass chain? */
-	public final STObject[] fields;
+	public STObject[] fields;
 
 	public STObject(STMetaClassObject metaclass) {
 		this.metaclass = metaclass;
 		fields = null;
-		// Create empty slot for each field directly defined by metaclass
-		// plus any fields inherited from super class.
-		// Note: native backing objects like STBoolean do not have smalltalk-visible fields
-		// so nfields == 0 and therefore vm can be null.
 	}
 
 	/** Which fields are directly defined? null if no fields */
@@ -52,8 +48,7 @@ public class STObject {
 	 */
 	public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
 		VirtualMachine vm = ctx.vm;
-		vm.assertNumOperands(nArgs+1); // ensure args + receiver
-		// index of 1st arg on opnd stack; use only if arg(s) present for primitive
+		vm.assertNumOperands(nArgs+1);
 		int firstArg = ctx.sp - nArgs + 1; 
 		STObject receiver = ctx.stack[firstArg-1];
 		STObject result = null;
@@ -66,11 +61,11 @@ public class STObject {
 				ctx.sp--;
 				result = new STString(vm, receiver.getSTClass().getName());
 				break;
-			case Object_SAME : // SmallTalk == op.  same as == in Java (same object)
+			case Object_SAME:
 				STObject x = receiver;
-				STObject y = ctx.stack[firstArg]; // get right operand (first arg)
+				STObject y = ctx.stack[firstArg];
 				ctx.sp -= 2;
-				result = vm.newBoolean(x == y);
+				result = vm.newBoolean(x.toString().equals(y.toString()));
 				break;
 			case Object_HASH:
 				ctx.sp--;

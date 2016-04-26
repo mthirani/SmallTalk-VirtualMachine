@@ -25,11 +25,11 @@ public class STMetaClassObject extends STObject {
 	public final VirtualMachine vm;
 	public final String name;
 	public final STMetaClassObject superClass;
-	public final List<STObject> fields;							//Changed from public final List<String> fields;
+	public final List<String> fields;
 	public final Map<String,STCompiledBlock> methods;
 
 	public STMetaClassObject(VirtualMachine vm, STClass classSymbol) {
-		super(null); // metaclass for a metaclass is 'this' but 'this' doesn't exist yet; see override of getSTClass()
+		super(null);
 		this.vm = vm;
 		if(classSymbol.getSuperClassScope() != null)
 			this.superClass = new STMetaClassObject(vm, (STClass) classSymbol.getSuperClassScope());
@@ -37,19 +37,15 @@ public class STMetaClassObject extends STObject {
 			this.superClass = null;
 		this.name = classSymbol.getName();
 		fields = new ArrayList<>();
-		// make space for ALL fields, including inherited ones
-		for (FieldSymbol f : classSymbol.getDefinedFields()) {
-			fields.add(new STString(vm, f.getName()));				//Changed from fields.add(f.getName());
+		for (FieldSymbol f : classSymbol.getFields()) {				//getDefinedFields
+			fields.add(f.getName());
 		}
-		// for all methods defined in classSymbol, map method name to its compiled method
 		methods = new HashMap<>();
 		for (MethodSymbol m : classSymbol.getDefinedMethods()) {
 			STCompiledBlock m1 = ((STMethod)m).compiledBlock;
-			m1.enclosingClass = this;			//Added by Mayank for setting the enclosingClass for all blocks
-			//methods.put(m.getName(), ((STMethod)m).compiledBlock);
+			m1.enclosingClass = this;
 			methods.put(m.getName(), m1);
 		}
-		// set enclosingClass for all nested blocks within method
 	}
 
 	@Override
@@ -59,15 +55,31 @@ public class STMetaClassObject extends STObject {
 
 	public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
 		VirtualMachine vm = ctx.vm;
-		ctx.vm.assertNumOperands(nArgs+1); // ensure args + receiver
+		ctx.vm.assertNumOperands(nArgs+1);
 		int firstArg = ctx.sp - nArgs + 1;
 		STObject receiver = ctx.stack[firstArg-1];
 		STObject result = vm.nil();
-		//if ( firstArg-1 >= 0 ) receiver = ctx.stack[firstArg-1];
 		switch ( primitive ) {
 			case Object_Class_BASICNEW:
+				int count = 0;
 				ctx.sp--;
-				result = new STObject((STMetaClassObject) receiver);
+				STMetaClassObject recv = (STMetaClassObject) receiver;
+				result = new STObject(recv);
+				if(recv.superClass != null){
+					if(recv.superClass.getNumberOfFields() != 0)
+						count = count + recv.superClass.getNumberOfFields();
+				}
+				if(recv.getNumberOfFields() != 0){
+					count = count + recv.getNumberOfFields();
+				}
+				if(count != 0){
+					result.fields = new STObject[count];
+					for(int i=0; i<count; i++){
+						result.fields[i] = vm.nil();
+					}
+				}
+				else
+					result.fields = new STObject[0];
 				break;
 			case Object_Class_ERROR:
 				vm.error(ctx.stack[firstArg].asString().toString());

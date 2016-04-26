@@ -28,7 +28,6 @@ public class STString extends STObject {
 				ropnd = ctx.stack[firstArg];
 				ctx.sp -= 2;
 				s = receiver.s + new STString(vm, ropnd.toString());
-				//s = receiver.s + ((STString)ropnd).s;
 				result = new STString(vm, s);
 				break;
 			case Object_ASSTRING:
@@ -42,7 +41,7 @@ public class STString extends STObject {
 				break;
 			case String_EQ:
 				STObject x = receiver;
-				STObject y = ctx.stack[firstArg]; // get right operand (first arg)
+				STObject y = ctx.stack[firstArg];
 				ctx.sp -= 2;
 				if(x.toString().equals(y.toString()))
 					result = vm.newBoolean(true);
@@ -51,7 +50,7 @@ public class STString extends STObject {
 				break;
 			case String_Class_NEW:
 				STObject recv = receiver;
-				STObject arg = ctx.stack[firstArg]; // get right operand (first arg)
+				STObject arg = ctx.stack[firstArg];
 				ctx.sp -= 2;
 				if(arg instanceof STString)
 					result = new STString(vm, ((STString) arg).s);

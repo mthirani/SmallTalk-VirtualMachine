@@ -39,7 +39,7 @@ public class BlockContext {
 	public static final BlockContext RETURNED = new BlockContext();
 
 	/** In what VM am I executing? */
-	public VirtualMachine vm;		//final
+	public VirtualMachine vm;
 
 	// ----- STATE OF EXECUTION -----
 
@@ -50,13 +50,13 @@ public class BlockContext {
 	public BlockContext invokingContext;
 
 	/** The receiver of the message that resulted in this context */
-	public STObject receiver;		//final
+	public STObject receiver;
 
 	/** The compiled code associated with this context */
-	public STCompiledBlock compiledBlock;		//final
+	public STCompiledBlock compiledBlock;
 
 	/** All arguments and local variables associated with this block */
-	public STObject[] locals;		//final
+	public STObject[] locals;
 
 	/** The instruction pointer that points into compiledBlock.bytcodes */
 	public int ip = 0;
@@ -188,10 +188,9 @@ public class BlockContext {
 	 *  the enclosing method).
 	 */
 	public BlockContext(VirtualMachine vm, BlockDescriptor descriptor) {
-		this(vm, descriptor.block, descriptor.receiver);		//added by Mayank
-		this.enclosingContext = descriptor.enclosingContext;	//added by Mayank		[changed from descriptor.enclosingMethodContext
-		this.enclosingMethodContext = descriptor.enclosingMethodContext;		//added by Mayank
-		//this.stack[++sp] = descriptor;						//commented out
+		this(vm, descriptor.block, descriptor.receiver);
+		this.enclosingContext = descriptor.enclosingContext;
+		this.enclosingMethodContext = descriptor.enclosingMethodContext;
 		this.vm = vm;
 	}
 

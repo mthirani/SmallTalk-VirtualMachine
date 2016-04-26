@@ -86,7 +86,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			pushScope(ctx.scope);
 			nlocals.put(ctx.scope.getName(), 0);
 			Code code = visitChildren(ctx);
-			if(compiler.genDbg){								//Newly inserted to pass the TestDbgInstructions
+			if(compiler.genDbg){
 				code = Code.join(code, dbgAtEndMain(ctx.stop));
 			}
 			code = code.join(Compiler.pop());
@@ -113,7 +113,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			if(currentScope.getName().indexOf("block") >= 0){
 				Code code = Compiler.push_nil();
 				if(compiler.genDbg){
-					code = Code.join(dbgAtEndBlock(ctx.stop), code);		//Changed this code from "code = Code.join(code, dbgAtEndBlock(ctx.stop));"
+					code = Code.join(dbgAtEndBlock(ctx.stop), code);
 				}
 				return code;
 			}
@@ -229,8 +229,6 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitUnaryMsgSend(SmalltalkParser.UnaryMsgSendContext ctx) {
-//		setLiterals(currentScope.getName(), ctx.ID().getText());
-//		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
 		Code code = visit(ctx.unaryExpression());
 		setLiterals(currentScope.getName(), ctx.ID().getText());
 		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
@@ -344,7 +342,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 		SmalltalkParser.MethodContext methodNode = (SmalltalkParser.MethodContext)ctx.getParent();
 		Code code = visitChildren(ctx);
-		if ( compiler.genDbg ) { // put dbg in front of push_self
+		if ( compiler.genDbg ) {
 			code = Code.join(code, dbgAtEndBlock(ctx.stop));
 		}
 		if ( ctx.body() instanceof SmalltalkParser.FullBodyContext ) {

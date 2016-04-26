@@ -3,7 +3,6 @@ package smalltalk.vm;
 import org.antlr.symtab.ClassSymbol;
 import org.antlr.symtab.Symbol;
 import org.antlr.symtab.Utils;
-import org.stringtemplate.v4.ST;
 import smalltalk.compiler.*;
 import smalltalk.vm.exceptions.*;
 import smalltalk.vm.primitive.*;
@@ -152,22 +151,8 @@ public class VirtualMachine {
 					consumeByte(ctx.ip);
 					int fieldIndex = getShort(ctx.ip);
 					consumeShort(ctx.ip);
-					//STObject rec = ctx.receiver;
-					STMetaClassObject targetObj = this.lookupClass(ctx.receiver.metaclass.getName());
-					/*** Newly Added ***/
-					if(targetObj.fields.size() != 0){
-						ctx.push(targetObj.fields.get(fieldIndex));
-						//ctx.push(newString(targetObj.fields.get(fieldIndex)));
-					}
-					else{
-						if(ctx.receiver.metaclass.superClass != null){
-							targetObj = this.lookupClass(ctx.receiver.metaclass.superClass.getName());
-							ctx.push(targetObj.fields.get(fieldIndex));
-							//ctx.push(newString(targetObj.fields.get(fieldIndex)));
-						}
-					}
-					/*** Newly Added ***/
-					//ctx.push(newString(targetObj.fields.get(fieldIndex)));		Earlier this line was just there
+					STObject rec = ctx.receiver;
+					ctx.push(rec.fields[fieldIndex]);
 					break;
 				case Bytecode.STORE_LOCAL:
 					consumeByte(ctx.ip);
@@ -182,22 +167,8 @@ public class VirtualMachine {
 					consumeByte(ctx.ip);
 					int fldIndx = getShort(ctx.ip);
 					consumeShort(ctx.ip);
-					STMetaClassObject target = this.lookupClass(ctx.receiver.metaclass.getName());
-					/*** Newly Added ***/
-					if(target.fields.size() != 0)
-						//target.fields.set(fldIndx, ctx.top().toString());
-						//((ArrayList) target.fields).set(fldIndx, ctx.top());
-						target.fields.set(fldIndx, ctx.top());
-					else{
-						if(ctx.receiver.metaclass.superClass != null){
-							target = this.lookupClass(ctx.receiver.metaclass.superClass.getName());
-							//target.fields.set(fldIndx, ctx.top().toString());
-							//((ArrayList) target.fields).set(fldIndx, ctx.top());
-							target.fields.set(fldIndx, ctx.top());
-						}
-					}
-					/*** Newly Added ***/
-					//target.fields.set(fldIndx, ctx.top().toString());			Earlier this line was just there
+					STObject storeRec = ctx.receiver;
+					storeRec.fields[fldIndx] = ctx.top();
 					break;
 				case Bytecode.SEND:
 					ctx.prev_ip = ctx.ip;
@@ -236,7 +207,6 @@ public class VirtualMachine {
 					consumeShort(ctx.ip);
 					String litValue = ctx.compiledBlock.literals[litIndex];
 					STObject recieve = ctx.stack[ctx.sp - arg];	//Extract the Receiver of the message which should be a meta class object
-					//STCompiledBlock st = getSTCompiledBlock(ctx.compiledBlock.enclosingClass.superClass, litValue);
 					STCompiledBlock st = getSTCompiledBlock(ctx.compiledBlock.enclosingClass.superClass, litValue);
 					ctx.sp = ctx.sp - arg - 1;						//Modified the invoking ctx stack pointer
 					BlockContext bctx = new BlockContext(this, st, recieve);			//Create a new BlockContext based on the receive instance type
@@ -470,12 +440,10 @@ public class VirtualMachine {
 			return Primitive.Object_Class_BASICNEW;
 		if(literal.equals("show:"))
 			return Primitive.TranscriptStream_SHOW;
-		/*if(literal.equals("size"))
-			return Primitive.Array_SIZE;
-		if(literal.equals("at:put:"))
-			return Primitive.Array_AT_PUT;
-		if(literal.equals("at:"))
-			return Primitive.Array_AT;*/
+		if(literal.equals("=="))
+			return Primitive.Object_SAME;
+		if(literal.equals("className"))
+			return Primitive.Object_CLASSNAME;
 		if(ctx.stack[ctx.sp - args] instanceof STMetaClassObject){
 			String name = ((STMetaClassObject) ctx.stack[ctx.sp - args]).getName();
 			if(name.equals("Array"))
