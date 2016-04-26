@@ -17,7 +17,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: MainClass>>main\n" +
 			"    nargs: 0\n" +
 			"    nlocals: 0\n" +
-			"    literals: 'x','<unknown>','=='\n" +
+			"    literals: '<unknown>','x','=='\n" +
 			"    0000:  dbg '<unknown>', 1:2\n" +
 			"    0007:  push_global    'x'\n" +
 			"    0010:  nil              \n" +
@@ -47,7 +47,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: MainClass>>main\n" +
 			"    nargs: 0\n" +
 			"    nlocals: 0\n" +
-			"    literals: 'ifTrue:','<unknown>'\n" +
+			"    literals: '<unknown>','ifTrue:'\n" +
 			"    0000:  block          0\n" +
 			"    0003:  block          1\n" +
 			"    0006:  dbg '<unknown>', 1:9\n" +
@@ -61,7 +61,7 @@ public class TestDbgInstruction extends BaseTest {
 			"        qualifiedName: main>>main-block0\n" +
 			"        nargs: 0\n" +
 			"        nlocals: 0\n" +
-			"        literals: 'p','<unknown>','~~'\n" +
+			"        literals: '<unknown>','p','~~'\n" +
 			"        0000:  dbg '<unknown>', 1:2\n" +
 			"        0007:  push_global    'p'\n" +
 			"        0010:  nil              \n" +
@@ -95,7 +95,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: MainClass>>main\n" +
 			"    nargs: 0\n" +
 			"    nlocals: 0\n" +
-			"    literals: 'x','<unknown>','=='\n" +
+			"    literals: '<unknown>','x','=='\n" +
 			"    0000:  dbg '<unknown>', 1:1\n" +
 			"    0007:  push_global    'x'\n" +
 			"    0010:  nil              \n" +
@@ -121,7 +121,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: MainClass>>main\n" +
 			"    nargs: 0\n" +
 			"    nlocals: 0\n" +
-			"    literals: 'asString','<unknown>'\n" +
+			"    literals: '<unknown>','asString'\n" +
 			"    0000:  dbg '<unknown>', 1:2\n" +
 			"    0007:  push_int       3\n" +
 			"    0012:  send           0, 'asString'\n" +
@@ -146,7 +146,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: MainClass>>main\n" +
 			"    nargs: 0\n" +
 			"    nlocals: 0\n" +
-			"    literals: 'to:do:','<unknown>'\n" +
+			"    literals: '<unknown>','to:do:'\n" +
 			"    0000:  push_int       1\n" +
 			"    0005:  push_int       10\n" +
 			"    0010:  block          0\n" +
@@ -187,7 +187,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: MainClass>>main\n" +
 			"    nargs: 0\n" +
 			"    nlocals: 0\n" +
-			"    literals: 'abc','size','<unknown>','to:do:'\n" +
+			"    literals: '<unknown>','abc','size','to:do:'\n" +
 			"    0000:  push_int       1\n" +
 			"    0005:  dbg '<unknown>', 1:12\n" +
 			"    0012:  push_literal   'abc'\n" +
@@ -234,7 +234,7 @@ public class TestDbgInstruction extends BaseTest {
 			"    qualifiedName: T>>do:\n" +
 			"    nargs: 1\n" +
 			"    nlocals: 1\n" +
-			"    literals: 'head','<unknown>','whileTrue:'\n" +
+			"    literals: '<unknown>','head','whileTrue:'\n" +
 			"    0000:  dbg '<unknown>', 4:2\n" +
 			"    0007:  push_global    'head'\n" +
 			"    0010:  store_local    0, 1\n" +
@@ -264,7 +264,7 @@ public class TestDbgInstruction extends BaseTest {
 			"        qualifiedName: do:>>do:-block1\n" +
 			"        nargs: 0\n" +
 			"        nlocals: 0\n" +
-			"        literals: 'value','<unknown>','value:','nextLink'\n" +
+			"        literals: '<unknown>','value','value:','nextLink'\n" +
 			"        0000:  push_local     1, 0\n" +
 			"        0005:  dbg '<unknown>', 5:38\n" +
 			"        0012:  push_local     1, 1\n" +

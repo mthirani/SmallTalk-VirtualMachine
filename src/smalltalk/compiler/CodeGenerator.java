@@ -21,7 +21,21 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	/** With which compiler are we generating code? */
 	public final Compiler compiler;
 	public boolean isClassMethod = false;
-	public LinkedHashMap<String, LinkedHashSet<String>> literals;
+
+	@Override
+	public Code visitArray(SmalltalkParser.ArrayContext ctx) {
+		int totalElements = 0;
+		Code code = Code.None;
+		for(SmalltalkParser.MessageExpressionContext mec: ctx.messageExpression()){
+			code = code.join(visit(mec));
+			totalElements++;
+		}
+		code = code.join(Compiler.push_array(totalElements));
+
+		return code;
+	}
+
+	public LinkedHashMap<String, LinkedHashSet<String>> literals;				//To add unique literals and insert the literals in sequence so used LinkedHashSet
 	public HashMap<String, TreeSet<STCompiledBlock>> compiledBlocks;
 	public HashMap<String, Integer> nlocals;
 	public HashMap<String, Integer> nargs;
@@ -72,6 +86,9 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			pushScope(ctx.scope);
 			nlocals.put(ctx.scope.getName(), 0);
 			Code code = visitChildren(ctx);
+			if(compiler.genDbg){								//Newly inserted to pass the TestDbgInstructions
+				code = Code.join(code, dbgAtEndMain(ctx.stop));
+			}
 			code = code.join(Compiler.pop());
 			code = code.join(Compiler.push_self());
 			code = code.join(Compiler.method_return());
@@ -86,16 +103,27 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 	@Override
 	public Code visitEmptyBody(SmalltalkParser.EmptyBodyContext ctx) {
 		if (ctx.localVars() != null){
-			Code c = visitLocalVars(ctx.localVars());
-			return c;
+			Code code = visitLocalVars(ctx.localVars());
+			if(compiler.genDbg){
+				code = Code.join(code, dbgAtEndBlock(ctx.stop));
+			}
+			return code;
 		}
 		else{
 			if(currentScope.getName().indexOf("block") >= 0){
 				Code code = Compiler.push_nil();
+				if(compiler.genDbg){
+					code = Code.join(dbgAtEndBlock(ctx.stop), code);		//Changed this code from "code = Code.join(code, dbgAtEndBlock(ctx.stop));"
+				}
 				return code;
 			}
 			else{
-				return Code.None;
+				Code code = Code.None;
+				if(compiler.genDbg){
+					code = Code.join(code, dbgAtEndBlock(ctx.stop));
+				}
+
+				return code;
 			}
 		}
 	}
@@ -109,6 +137,9 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		if(ctx.blockArgs() != null)
 			e = visit(ctx.blockArgs());
 		Code code = e.join(visit(ctx.body()));
+		if(compiler.genDbg){
+			code = Code.join(code, dbgAtEndBlock(ctx.stop));
+		}
 		code = code.join(Compiler.push_block_return());
 		ctx.scope.compiledBlock = getCompiledBlock(ctx.scope, code);
 		/***** Map/ Add the Compiled Block code in the specified scope block ****/
@@ -130,7 +161,10 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		setLiterals(currentScope.getName(), ctx.ID().getText());
 		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
 		Code code = Compiler.push_self();
-		code = code.join(Compiler.push_send_super(0, index));
+		if(compiler.genDbg)
+			code = code.join(Compiler.push_send_super(0, index+1));
+		else
+			code = code.join(Compiler.push_send_super(0, index));
 
 		return code;
 	}
@@ -195,10 +229,18 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 
 	@Override
 	public Code visitUnaryMsgSend(SmalltalkParser.UnaryMsgSendContext ctx) {
+//		setLiterals(currentScope.getName(), ctx.ID().getText());
+//		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
+		Code code = visit(ctx.unaryExpression());
 		setLiterals(currentScope.getName(), ctx.ID().getText());
 		int index = findIndex(literals.get(currentScope.getName()), ctx.ID().getText());
-		Code code = visit(ctx.unaryExpression());
-		code = code.join(Compiler.push_send(0, index));
+		if(compiler.genDbg)
+			code = code.join(Compiler.push_send(0, index+1));
+		else
+			code = code.join(Compiler.push_send(0, index));
+		if (compiler.genDbg) {
+			code = Code.join(dbg(ctx.ID().getSymbol()), code);
+		}
 
 		return code;
 	}
@@ -252,8 +294,15 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			}
 			setLiterals(scopeName, keywords);
 			index = findIndex(literals.get(scopeName), keywords);
-			code = code.join(Compiler.push_send(args, index));
+			if(compiler.genDbg){
+				code = Code.join(code, dbg(ctx.KEYWORD(0).getSymbol()));
+			}
+			if(compiler.genDbg)
+				code = code.join(Compiler.push_send(args, index+1));
+			else
+				code = code.join(Compiler.push_send(args, index));
 		}
+
 		return code;
 	}
 
@@ -262,10 +311,15 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		Code code = Code.None;
 		code = code.join(visit(ctx.unaryExpression(0)));
 		int i = 1;
+		int bop = 0;
 		while(ctx.getChild(i) != null){
 			code = code.join(visit(ctx.getChild(i+1)));
+			if(compiler.genDbg){
+				code = Code.join(dbg(ctx.bop(bop).getStart()), code);
+			}
 			code = code.join(visit(ctx.getChild(i)));
 			i = i + 2;
+			bop = bop + 1;
 		}
 
 		return code;
@@ -277,7 +331,10 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		String scopeName = currentScope.getName();
 		setLiterals(scopeName, ctx.getText());
 		int index = findIndex(literals.get(scopeName), ctx.getText());
-		code = code.join(Compiler.push_send(1, index));
+		if ( compiler.genDbg )
+			code = code.join(Compiler.push_send(1, index+1));
+		else
+			code = code.join(Compiler.push_send(1, index));
 
 		return code;
 	}
@@ -322,15 +379,26 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		int i;
 		if(literals.get(scope.getName()) != null){
 			LinkedHashSet<String> literalsCompiledBlock = literals.get(scope.getName());
-			stCompiledBlock.literals = new String[literalsCompiledBlock.size()];
 			i = 0;
+			if (compiler.genDbg){
+				stCompiledBlock.literals = new String[literalsCompiledBlock.size()+1];
+				stCompiledBlock.literals[i] = compiler.getFileName();
+				i++;
+			}
+			else
+				stCompiledBlock.literals = new String[literalsCompiledBlock.size()];
 			for(String  literal: literalsCompiledBlock){
 				stCompiledBlock.literals[i] = literal;
 				i++;
 			}
 		}
-		else
-			stCompiledBlock.literals = new String[0];
+		else{
+			if (compiler.genDbg){
+				stCompiledBlock.literals = new String[1];
+				stCompiledBlock.literals[0] = compiler.getFileName();
+			}else
+				stCompiledBlock.literals = new String[0];
+		}
 		if(compiledBlocks.get(scope.getName()) != null){
 			TreeSet<STCompiledBlock> stCompiledBlocks = compiledBlocks.get(scope.getName());
 			stCompiledBlock.blocks = new STCompiledBlock[stCompiledBlocks.size()];
@@ -354,9 +422,10 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		Code e = visit(ctx.messageExpression());
 		Code store = store(ctx.lvalue().ID().getText());
 		Code code = e.join(store);
-		if ( compiler.genDbg ) {
+		if (compiler.genDbg) {
 			code = dbg(ctx.start).join(code);
 		}
+
 		return code;
 	}
 
@@ -367,7 +436,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 			return Compiler.push_store_field(i);
 		}
 		else{
-			if(s instanceof STVariable){
+			if(s instanceof STVariable || s instanceof STArg){				//Inserted s instanceof STArg
 				Scope scope = currentScope;
 				int i = s.getInsertionOrderNumber();
 				int d = 0;				//this is delta from current scope to s.scope
@@ -419,8 +488,10 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 					String scopeName = currentScope.getName();
 					setLiterals(scopeName, ctx.ID().getText());
 					index = findIndex(literals.get(scopeName), ctx.ID().getText());
-
-					return Compiler.push_global(index);
+					if(compiler.genDbg)
+						return Compiler.push_global(index+1);
+					else
+						return Compiler.push_global(index);
 				}
 			}
 		}
@@ -447,21 +518,28 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		else if(ctx.getText().equals("false"))
 			return Compiler.push_false();
 		else if(ctx.getText().startsWith("$"))
-			return Compiler.push_char(ctx.getText().charAt(0));
+			return Compiler.push_char(ctx.getText().charAt(1));
 		else if(ctx.getText().startsWith("'")){
 			setLiterals(scopeName, ctx.getText().substring(1,ctx.getText().length()-1));
 			int index = findIndex(literals.get(scopeName), ctx.getText().substring(1,ctx.getText().length()-1));
-			return Compiler.push_literal(index);
+			if ( compiler.genDbg )
+				return Compiler.push_literal(index+1);
+			else
+				return Compiler.push_literal(index);
 		}
-		else
-			return Compiler.push_int(new Integer(ctx.getText()));
+		else{
+			if(ctx.getText().indexOf(".") >= 0)
+				return Compiler.push_float(new Float(ctx.getText()));
+			else
+				return Compiler.push_int(new Integer(ctx.getText()));
+		}
 	}
 
 	@Override
 	public Code visitReturn(SmalltalkParser.ReturnContext ctx) {
 		Code e = visit(ctx.messageExpression());
 		if ( compiler.genDbg ) {
-			e = Code.join(e, dbg(ctx.start)); // put dbg after expression as that is when it executes
+			e = Code.join(e, dbg(ctx.start));
 		}
 		Code code = e.join(Compiler.method_return());
 
@@ -496,7 +574,7 @@ public class CodeGenerator extends SmalltalkBaseVisitor<Code> {
 		return dbg(t.getLine(), t.getCharPositionInLine());
 	}
 
-	public Code dbg(int line, int charPos) {
+	public Code dbg(int line, int charPos) {			//lineFromCombined method in  Bytecode java file has been modified: Added /256 in return
 		return Compiler.dbg(getLiteralIndex(compiler.getFileName()), line, charPos);
 	}
 

@@ -24,6 +24,7 @@ public class SystemDictionary {
 		this.vm = vm;
 		this.stSymbolTable = stSymbolTable;
 		initPredefinedObjects();
+		//symtabToSystemDictionary(stSymbolTable);			//Newly added
 	}
 
 	/** Convert the symbol table with classes, methods, and compiled code
@@ -35,6 +36,7 @@ public class SystemDictionary {
 	 *  {@link smalltalk.vm.primitive.STCompiledBlock}s.
 	 */
 	public void symtabToSystemDictionary(STSymbolTable symtab) {
+
 	}
 
 	/** Define predefined object Transcript. */
@@ -54,10 +56,15 @@ public class SystemDictionary {
 			STMetaClassObject stMetaClassObject = new STMetaClassObject(vm, stclass);
 			return stMetaClassObject;
 		}
-		return objects.get(id).getSTClass();
+		STMetaClassObject stMetaClassObject = null;
+		if(objects.get(id) != null)
+			stMetaClassObject = objects.get(id).getSTClass();
+
+		return stMetaClassObject;
 	}
 
 	public void defineMetaObject(String name, STMetaClassObject meta) {
+		objects.put(name, meta);
 	}
 
 	public Collection<STObject> getObjects() { return this.objects.values(); }

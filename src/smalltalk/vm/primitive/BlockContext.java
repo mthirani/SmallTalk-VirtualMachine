@@ -156,6 +156,13 @@ public class BlockContext {
 
 	/** Create a context from a STCompiledBlock and a receiver object */
 	public BlockContext(VirtualMachine vm, STCompiledBlock compiledBlock, STObject receiver) {
+		this.vm = vm;
+		this.compiledBlock = compiledBlock;
+		this.receiver = receiver;
+		this.stack = new STObject[1000];
+		this.locals = new STObject[compiledBlock.nargs + compiledBlock.nlocals];
+		for(int i=0; i<(compiledBlock.nargs + compiledBlock.nlocals); i++)
+			this.locals[i] = vm.nil();
 	}
 
 	/** Create a BlockContext from a {@link BlockDescriptor} as a
@@ -181,15 +188,34 @@ public class BlockContext {
 	 *  the enclosing method).
 	 */
 	public BlockContext(VirtualMachine vm, BlockDescriptor descriptor) {
+		this(vm, descriptor.block, descriptor.receiver);		//added by Mayank
+		this.enclosingContext = descriptor.enclosingContext;	//added by Mayank		[changed from descriptor.enclosingMethodContext
+		this.enclosingMethodContext = descriptor.enclosingMethodContext;		//added by Mayank
+		//this.stack[++sp] = descriptor;						//commented out
+		this.vm = vm;
 	}
 
 	public void push(STObject o) {
+		this.stack[++sp] = o;
 	}
-	public STObject pop() { return null; }
-	public STObject top() { return null; }
+	public STObject pop() { return stack[sp--]; }
+	public STObject top() { return stack[sp]; }
 
 	/** If there is no enclosing context, we must be a method. */
-	public boolean isBlock() { return false; }
+	public boolean isBlock() {
+		if(enclosingContext != null)
+			return true;
+		else
+			return true;
+	}
+
+	public void setLocals(STObject[] extractObjs, int args) {
+		if(args > locals.length)
+			this.locals = new STObject[args];
+		for(int i = 0; i < args; i++){
+			this.locals[i] = extractObjs[i];
+		}
+	}
 
 	@Override
 	public String toString() {

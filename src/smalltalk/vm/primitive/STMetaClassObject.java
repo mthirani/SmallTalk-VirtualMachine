@@ -25,7 +25,7 @@ public class STMetaClassObject extends STObject {
 	public final VirtualMachine vm;
 	public final String name;
 	public final STMetaClassObject superClass;
-	public final List<String> fields;
+	public final List<STObject> fields;							//Changed from public final List<String> fields;
 	public final Map<String,STCompiledBlock> methods;
 
 	public STMetaClassObject(VirtualMachine vm, STClass classSymbol) {
@@ -38,13 +38,16 @@ public class STMetaClassObject extends STObject {
 		this.name = classSymbol.getName();
 		fields = new ArrayList<>();
 		// make space for ALL fields, including inherited ones
-		for (FieldSymbol f : classSymbol.getFields()) {
-			fields.add(f.getName());
+		for (FieldSymbol f : classSymbol.getDefinedFields()) {
+			fields.add(new STString(vm, f.getName()));				//Changed from fields.add(f.getName());
 		}
 		// for all methods defined in classSymbol, map method name to its compiled method
 		methods = new HashMap<>();
 		for (MethodSymbol m : classSymbol.getDefinedMethods()) {
-			methods.put(m.getName(), ((STMethod)m).compiledBlock);
+			STCompiledBlock m1 = ((STMethod)m).compiledBlock;
+			m1.enclosingClass = this;			//Added by Mayank for setting the enclosingClass for all blocks
+			//methods.put(m.getName(), ((STMethod)m).compiledBlock);
+			methods.put(m.getName(), m1);
 		}
 		// set enclosingClass for all nested blocks within method
 	}
@@ -58,14 +61,20 @@ public class STMetaClassObject extends STObject {
 		VirtualMachine vm = ctx.vm;
 		ctx.vm.assertNumOperands(nArgs+1); // ensure args + receiver
 		int firstArg = ctx.sp - nArgs + 1;
-		STObject receiver = null;
+		STObject receiver = ctx.stack[firstArg-1];
 		STObject result = vm.nil();
-		if ( firstArg-1 >= 0 ) receiver = ctx.stack[firstArg-1];
+		//if ( firstArg-1 >= 0 ) receiver = ctx.stack[firstArg-1];
 		switch ( primitive ) {
 			case Object_Class_BASICNEW:
+				ctx.sp--;
+				result = new STObject((STMetaClassObject) receiver);
 				break;
 			case Object_Class_ERROR:
 				vm.error(ctx.stack[firstArg].asString().toString());
+				break;
+			case TranscriptStream_SHOW:
+				ctx.sp--;
+				result = receiver.asString();
 				break;
 		}
 		return result;

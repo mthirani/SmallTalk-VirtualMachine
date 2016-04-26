@@ -3,11 +3,12 @@ package smalltalk.test;
 import org.antlr.v4.runtime.misc.Utils;
 import org.junit.Test;
 import smalltalk.Run;
+import smalltalk.compiler.Compiler;
 import smalltalk.compiler.STSymbolTable;
-import smalltalk.vm.VirtualMachine;
 import smalltalk.vm.primitive.STMetaClassObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -268,34 +269,34 @@ public class TestCodeGen extends BaseTest {
 
 	@Test public void testInheritFieldAndHaveField() {
 		String input =
-				"class T [\n" +
-						"    | x |\n" +
-						"]\n" +
-						"class U : T [\n" +
-						"    | y |\n" +
-						"    value [ ^x + y ]\n" +
-						"]\n";
+			"class T [\n" +
+			"    | x |\n" +
+			"]\n" +
+			"class U : T [\n" +
+			"    | y |\n" +
+			"    value [ ^x + y ]\n" +
+			"]\n";
 		String expecting =
-				"name: T\n"+
-						"superClass: \n"+
-						"fields: x\n"+
-						"methods:\n"+
-						"name: U\n"+
-						"superClass: T\n"+
-						"fields: x,y\n"+
-						"methods:\n"+
-						"    name: value\n"+
-						"    qualifiedName: U>>value\n"+
-						"    nargs: 0\n"+
-						"    nlocals: 0\n"+
-						"    literals: '+'\n"+
-						"    0000:  push_field     0\n"+
-						"    0003:  push_field     1\n"+
-						"    0006:  send           1, '+'\n"+
-						"    0011:  return           \n"+
-						"    0012:  pop              \n"+
-						"    0013:  self             \n"+
-						"    0014:  return           \n";
+			"name: T\n"+
+			"superClass: \n"+
+			"fields: x\n"+
+			"methods:\n"+
+			"name: U\n"+
+			"superClass: T\n"+
+			"fields: x,y\n"+
+			"methods:\n"+
+			"    name: value\n"+
+			"    qualifiedName: U>>value\n"+
+			"    nargs: 0\n"+
+			"    nlocals: 0\n"+
+			"    literals: '+'\n"+
+			"    0000:  push_field     0\n"+
+			"    0003:  push_field     1\n"+
+			"    0006:  send           1, '+'\n"+
+			"    0011:  return           \n"+
+			"    0012:  pop              \n"+
+			"    0013:  self             \n"+
+			"    0014:  return           \n";
 		String result = compile(input);
 		assertEquals(expecting, result);
 	}
@@ -475,15 +476,17 @@ public class TestCodeGen extends BaseTest {
 		boolean genDbg = false;
 		STSymbolTable symtab = Run.compileCore(genDbg);
 		Run.compile(symtab, "smalltalk/test/linkedlist.st", genDbg);
-		VirtualMachine vm = new VirtualMachine(symtab);
-		STMetaClassObject linkedListClass = vm.lookupClass("LinkedList");
+		List<STMetaClassObject> metaObjects = smalltalk.compiler.Compiler.getMetaObjects(symtab);
+		STMetaClassObject linkedListClass =
+			org.antlr.symtab.Utils.findFirst(metaObjects, meta -> meta.name.equals("LinkedList"));
 		String expectedOutputFileName = Run.getImageURL("smalltalk/test/linkedlist.st-teststring.txt").getFile();
 		char[] _expecting = Utils.readFile(expectedOutputFileName);
 		String expecting = new String(_expecting);
 		String result = linkedListClass.toTestString();
 		assertEquals(expecting, result);
 
-		STMetaClassObject linkClass = vm.lookupClass("Link");
+		STMetaClassObject linkClass =
+			org.antlr.symtab.Utils.findFirst(metaObjects, meta -> meta.name.equals("Link"));
 		expectedOutputFileName = Run.getImageURL("smalltalk/test/link-teststring.txt").getFile();
 		_expecting = Utils.readFile(expectedOutputFileName);
 		expecting = new String(_expecting);
@@ -498,12 +501,14 @@ public class TestCodeGen extends BaseTest {
 		boolean genDbg = true;
 		STSymbolTable symtab = Run.compileCore(genDbg);
 		Run.compile(symtab, "smalltalk/test/linkedlist.st", genDbg);
-		VirtualMachine vm = new VirtualMachine(symtab);
-		STMetaClassObject linkedListClass = vm.lookupClass("LinkedList");
+		List<STMetaClassObject> metaObjects = Compiler.getMetaObjects(symtab);
+		STMetaClassObject linkedListClass =
+			org.antlr.symtab.Utils.findFirst(metaObjects, meta -> meta.name.equals("LinkedList"));
 		String expectedOutputFileName = Run.getImageURL("smalltalk/test/linkedlist.st-teststring-dbg.txt").getFile();
 		char[] _expecting = Utils.readFile(expectedOutputFileName);
 		String expecting = new String(_expecting);
 		String result = linkedListClass.toTestString();
+		//System.out.println(result);
 		assertEquals(expecting, result);
 	}
 

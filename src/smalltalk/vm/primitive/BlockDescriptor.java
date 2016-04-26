@@ -17,7 +17,7 @@ import smalltalk.vm.VirtualMachine;
  */
 public class BlockDescriptor extends STObject {
 	/** This object is a descriptor for which compiled block? */
-	public STCompiledBlock block;		//final
+	public final STCompiledBlock block;
 
 	/** The immediately surrounding/enclosing method or block.
 	 *  If this block is a block within the outermost block (i.e., the method),
@@ -25,7 +25,7 @@ public class BlockDescriptor extends STObject {
 	 *
 	 *  See {@link BlockContext#enclosingContext} for more details.
 	 */
-	public BlockContext enclosingContext;	//final
+	public final BlockContext enclosingContext;
 
 	/** A shortcut up the enclosingContext chain to the method in which the
 	 *  block associated with this context is defined.  We need to locate
@@ -53,16 +53,52 @@ public class BlockDescriptor extends STObject {
 	 * 	bar: blk
 	 * 		blk value
 	 */
-	public STObject receiver;		//final
+	public final STObject receiver;
 
-	// visible only to the package so no one else can randomly create these objects
-	BlockDescriptor(STCompiledBlock blk, BlockContext activeContext) {
+	public BlockDescriptor(STCompiledBlock blk, BlockContext activeContext, BlockContext enclosingMethodContext) {
 		super(activeContext.vm.lookupClass("BlockDescriptor"));
 		enclosingContext = activeContext;
 		block = blk;
+		receiver = activeContext.receiver;
+		this.enclosingMethodContext = enclosingMethodContext;
 	}
 
 	public static STObject perform(BlockContext ctx, int nArgs, Primitive primitive) {
+		VirtualMachine vm = ctx.vm;
+		vm.assertNumOperands(nArgs+1);
+		int firstArg = ctx.sp - nArgs + 1;
+		STObject receiverObj = ctx.stack[firstArg-1];
+		BlockDescriptor receiver = (BlockDescriptor)receiverObj;
+		STObject result = vm.nil();
+		switch ( primitive ) {
+			case BlockDescriptor_VALUE:
+				ctx.sp -= 1;                                        //1 receiver
+				if (receiver instanceof BlockDescriptor) {
+					vm.pushctx = new BlockContext(vm, receiver);
+					result = null;
+				} else
+					result = vm.nil();
+				break;
+			case BlockDescriptor_VALUE_1_ARG:
+				vm.extractObjs = vm.getSTObjectArgs(ctx, nArgs);
+				ctx.sp -= 2;                                        //1 receiver & 1 argument
+				if (receiver instanceof BlockDescriptor) {
+					vm.pushctx = new BlockContext(vm, receiver);
+					result = null;
+				} else
+					result = vm.nil();
+				break;
+			case BlockDescriptor_VALUE_2_ARGS:
+				vm.extractObjs = vm.getSTObjectArgs(ctx, nArgs);
+				ctx.sp -= 3;                                        //1 receiver & 1 argument
+				if (receiver instanceof BlockDescriptor) {
+					vm.pushctx = new BlockContext(vm, receiver);
+					result = null;
+				} else
+					result = vm.nil();
+				break;
+		}
+
 		return null; // no result for block initiation; block just starts executing
 	}
 

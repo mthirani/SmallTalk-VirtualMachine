@@ -60,20 +60,29 @@ public class STObject {
 		switch ( primitive ) {
 			case Object_ASSTRING:
 				ctx.sp--; // pop receiver
-				// if asString not overridden in Smalltalk, create an STString
-				// from the *java* object's toString(); see STObject.asString()
 				result = receiver.asString();
 				break;
-			case Object_CLASSNAME :
+			case Object_CLASSNAME:
+				ctx.sp--;
+				result = new STString(vm, receiver.getSTClass().getName());
 				break;
 			case Object_SAME : // SmallTalk == op.  same as == in Java (same object)
 				STObject x = receiver;
 				STObject y = ctx.stack[firstArg]; // get right operand (first arg)
-				//System.out.println("SAME "+x+", "+y);
 				ctx.sp -= 2;
 				result = vm.newBoolean(x == y);
 				break;
 			case Object_HASH:
+				ctx.sp--;
+				result = receiver;
+				break;
+			case Object_Class_BASICNEW:
+				ctx.sp--;
+				result = new STObject((STMetaClassObject) receiver);
+				break;
+			case TranscriptStream_SHOW:
+				ctx.sp--;
+				result = receiver.asString();
 				break;
 		}
 		return result;

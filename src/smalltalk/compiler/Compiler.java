@@ -13,8 +13,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import smalltalk.misc.Utils;
 import smalltalk.vm.Bytecode;
+import smalltalk.vm.VirtualMachine;
+import smalltalk.vm.primitive.STMetaClassObject;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Compiler {
@@ -35,12 +40,15 @@ public class Compiler {
 	}
 
 	public String getFileName(){
-		return tokens.getSourceName();
+		return fileName;
 	}
+
 	public STSymbolTable compile(ANTLRInputStream input) {
 		ParserRuleContext tree = parseClasses(input);
 		defSymbols(tree);
 		resolveSymbols(tree);
+		File file = new File(input.getSourceName());
+		this.fileName = file.getName();
 		CodeGenerator codeGenerator = new CodeGenerator(this);
 		codeGenerator.visit(tree);
 
@@ -53,22 +61,21 @@ public class Compiler {
 		return Code.of(Bytecode.DBG).join(Utils.toLiteral(fileName)).join(Utils.shortToBytes(line)).join(Utils.shortToBytes(linePos));
 	}
 	public static Code push_nil() 				{ return Code.of(Bytecode.NIL); }
-	public static Code push_float() 				{ return Code.of(Bytecode.PUSH_FLOAT); }
+	public static Code push_float(float v) 				{ return Code.of(Bytecode.PUSH_FLOAT).join(Utils.floatToBytes(v)); }
 	public static Code push_field(int i)    		{ return Code.of(Bytecode.PUSH_FIELD).join(Utils.shortToBytes(i));
 	}
 	public static Code push_local(int d, int i) 				{ return Code.of(Bytecode.PUSH_LOCAL).join(Utils.shortToBytes(d)).join(Utils.shortToBytes(i)); }
 	public static Code push_literal(int v) 				{ return Code.of(Bytecode.PUSH_LITERAL).join(Utils.shortToBytes(v)); }
 	public static Code push_global(int v) 				{ return Code.of(Bytecode.PUSH_GLOBAL).join(Utils.shortToBytes(v)); }
-	public static Code push_array() 				{ return Code.of(Bytecode.PUSH_ARRAY); }
+	public static Code push_array(int v) 				{ return Code.of(Bytecode.PUSH_ARRAY).join(Utils.shortToBytes(v)); }
 	public static Code push_store_field(int i) 				{ return Code.of(Bytecode.STORE_FIELD).join(Utils.shortToBytes(i)); }
 	public static Code push_store_local(int d, int i) 				{ return Code.of(Bytecode.STORE_LOCAL).join(Utils.shortToBytes(d)).join(Utils.shortToBytes(i)); }
 	public static Code push_send(int n, int i) 				{ return Code.of(Bytecode.SEND).join(Utils.shortToBytes(n)).join(Utils.shortToBytes(i)); }
 	public static Code push_send_super(int n, int i) 				{ return Code.of(Bytecode.SEND_SUPER).join(Utils.shortToBytes(n)).join(Utils.shortToBytes(i)); }
 	public static Code push_block(int blkNum) 				{ return Code.of(Bytecode.BLOCK).join(Utils.shortToBytes(blkNum)); }
 	public static Code push_block_return() 				{ return Code.of(Bytecode.BLOCK_RETURN); }
-	public static Code push_char(char c)			{ return Code.of(Bytecode.PUSH_CHAR).join(Utils.shortToBytes(c)); }
+	public static Code push_char(int c)			{ return Code.of(Bytecode.PUSH_CHAR).join(Utils.shortToBytes(c)); }
 	public static Code push_int(int v) 			{ return Code.of(Bytecode.PUSH_INT).join(Utils.intToBytes(v)); }
-	public static Code push_debug() 				{ return Code.of(Bytecode.DBG); }
 	public static Code push_true() 				{ return Code.of(Bytecode.TRUE); }
 	public static Code push_false() 				{ return Code.of(Bytecode.FALSE); }
 
@@ -182,5 +189,14 @@ public class Compiler {
 		ResolveSymbols res = new ResolveSymbols(this);
 		ParseTreeWalker p = new ParseTreeWalker();
 		p.walk(res , tree);
+	}
+
+	public static List<STMetaClassObject> getMetaObjects(STSymbolTable symtab) {
+		VirtualMachine vm = new VirtualMachine(symtab);
+		STMetaClassObject linkedListClass = vm.lookupClass("LinkedList");
+		LinkedList<STMetaClassObject> stMetaClassObjects = new LinkedList<>();
+		stMetaClassObjects.add(linkedListClass);
+
+		return stMetaClassObjects;
 	}
 }

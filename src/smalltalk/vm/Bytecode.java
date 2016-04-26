@@ -13,7 +13,7 @@ public class Bytecode {
 	}
 
 	public static int lineFromCombined(int combined) {
-		return combined >> 8;
+		return (combined >> 8)/256;
 	}
 
 	public static int charPosFromCombined(int combined) {
