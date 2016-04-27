@@ -5,6 +5,7 @@ import org.junit.Test;
 import smalltalk.Run;
 import smalltalk.compiler.Compiler;
 import smalltalk.compiler.STSymbolTable;
+import smalltalk.vm.VirtualMachine;
 import smalltalk.vm.primitive.STMetaClassObject;
 
 import java.io.IOException;
@@ -476,17 +477,13 @@ public class TestCodeGen extends BaseTest {
 		boolean genDbg = false;
 		STSymbolTable symtab = Run.compileCore(genDbg);
 		Run.compile(symtab, "smalltalk/test/linkedlist.st", genDbg);
-		List<STMetaClassObject> metaObjects = smalltalk.compiler.Compiler.getMetaObjects(symtab);
-		STMetaClassObject linkedListClass =
-				org.antlr.symtab.Utils.findFirst(metaObjects, meta -> meta.name.equals("LinkedList"));
+		VirtualMachine vm = new VirtualMachine(symtab);
+		STMetaClassObject linkedListClass = vm.lookupClass("LinkedList");
 		String expectedOutputFileName = Run.getImageURL("smalltalk/test/linkedlist.st-teststring.txt").getFile();
 		char[] _expecting = Utils.readFile(expectedOutputFileName);
 		String expecting = new String(_expecting);
 		String result = linkedListClass.toTestString();
-		assertEquals(expecting, result);
-
-		STMetaClassObject linkClass =
-				org.antlr.symtab.Utils.findFirst(metaObjects, meta -> meta.name.equals("Link"));
+		assertEquals(expecting, result);        STMetaClassObject linkClass = vm.lookupClass("Link");
 		expectedOutputFileName = Run.getImageURL("smalltalk/test/link-teststring.txt").getFile();
 		_expecting = Utils.readFile(expectedOutputFileName);
 		expecting = new String(_expecting);
