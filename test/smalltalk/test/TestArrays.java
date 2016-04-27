@@ -73,7 +73,6 @@ public class TestArrays extends BaseTest {
 			"a := a filter: [:x | x<4].\n" +
 			"^a asString";
 		String expecting = "LinkedList(1. 2. 3)";
-		//String result = compile(input, true);
 		execAndCheckWithLinkedList(input, expecting);
 	}
 
