@@ -508,7 +508,6 @@ public class TestCodeGen extends BaseTest {
 		char[] _expecting = Utils.readFile(expectedOutputFileName);
 		String expecting = new String(_expecting);
 		String result = linkedListClass.toTestString();
-		//System.out.println(result);
 		assertEquals(expecting, result);
 	}
 
