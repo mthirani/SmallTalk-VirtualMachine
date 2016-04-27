@@ -64,3 +64,4 @@ class LinkedList : Collection [
        [p~~nil] whileTrue: [ blk value: (p value). p := p nextLink ]
    ]
 ]
+
