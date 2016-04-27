@@ -145,3 +145,5 @@ RETURN : '^' ;
 LBRACK : '[' ;
 
 RBRACK : ']' ;
+
+ErrorCharacter : . ;

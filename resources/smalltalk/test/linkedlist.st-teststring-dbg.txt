@@ -6,7 +6,7 @@ methods:
     qualifiedName: LinkedList>>addLast:
     nargs: 1
     nlocals: 0
-    literals: 'isEmpty','linkedlist.st','ifTrue:ifFalse:'
+    literals: 'linkedlist.st','isEmpty','ifTrue:ifFalse:'
     0000:  dbg 'linkedlist.st', 29:12
     0007:  self             
     0008:  send           0, 'isEmpty'
@@ -23,7 +23,7 @@ methods:
         qualifiedName: addLast:>>addLast:-block0
         nargs: 0
         nlocals: 0
-        literals: 'Link','withValue:','linkedlist.st'
+        literals: 'linkedlist.st','Link','withValue:'
         0000:  dbg 'linkedlist.st', 30:22
         0007:  push_global    'Link'
         0010:  push_local     1, 0
@@ -41,7 +41,7 @@ methods:
         qualifiedName: addLast:>>addLast:-block1
         nargs: 0
         nlocals: 0
-        literals: 'Link','withValue:','linkedlist.st','nextLink:','nextLink'
+        literals: 'linkedlist.st','Link','withValue:','nextLink:','nextLink'
         0000:  push_field     1
         0003:  push_global    'Link'
         0006:  push_local     1, 0
@@ -113,7 +113,7 @@ methods:
         qualifiedName: remove:>>remove:-block1
         nargs: 0
         nlocals: 0
-        literals: 'value','linkedlist.st','=','ifTrue:','nextLink'
+        literals: 'linkedlist.st','value','=','ifTrue:','nextLink'
         0000:  dbg 'linkedlist.st', 49:19
         0007:  dbg 'linkedlist.st', 49:13
         0014:  push_local     1, 2
@@ -156,7 +156,7 @@ methods:
         qualifiedName: remove:-block2>>remove:-block3
         nargs: 0
         nlocals: 0
-        literals: 'removeFirst','linkedlist.st'
+        literals: 'linkedlist.st','removeFirst'
         0000:  dbg 'linkedlist.st', 51:35
         0007:  self             
         0008:  send           0, 'removeFirst'
@@ -167,7 +167,7 @@ methods:
         qualifiedName: remove:-block2>>remove:-block4
         nargs: 0
         nlocals: 0
-        literals: 'nextLink','linkedlist.st','nextLink:','==','ifTrue:'
+        literals: 'linkedlist.st','nextLink','nextLink:','==','ifTrue:'
         0000:  push_local     3, 1
         0005:  dbg 'linkedlist.st', 53:40
         0012:  push_local     3, 2
@@ -213,7 +213,7 @@ methods:
     qualifiedName: LinkedList>>add:
     nargs: 1
     nlocals: 0
-    literals: 'addLast:','linkedlist.st'
+    literals: 'linkedlist.st','addLast:'
     0000:  self             
     0001:  push_local     0, 0
     0006:  dbg 'linkedlist.st', 21:17
@@ -244,7 +244,7 @@ methods:
         qualifiedName: removeFirst>>removeFirst-block0
         nargs: 0
         nlocals: 0
-        literals: 'nextLink','linkedlist.st','==','ifTrue:'
+        literals: 'linkedlist.st','nextLink','==','ifTrue:'
         0000:  dbg 'linkedlist.st', 36:11
         0007:  dbg 'linkedlist.st', 36:24
         0014:  push_field     0
@@ -292,7 +292,7 @@ methods:
     qualifiedName: LinkedList>>addFirst:
     nargs: 1
     nlocals: 1
-    literals: 'Link','withValue:','linkedlist.st','nextLink:'
+    literals: 'linkedlist.st','Link','withValue:','nextLink:'
     0000:  dbg 'linkedlist.st', 24:7
     0007:  push_global    'Link'
     0010:  push_local     0, 0
@@ -317,7 +317,7 @@ methods:
     qualifiedName: LinkedList>>removeAllSuchThat:
     nargs: 1
     nlocals: 0
-    literals: 'do:','linkedlist.st'
+    literals: 'linkedlist.st','do:'
     0000:  self             
     0001:  block          0
     0004:  dbg 'linkedlist.st', 42:11
@@ -331,7 +331,7 @@ methods:
         qualifiedName: removeAllSuchThat:>>removeAllSuchThat:-block0
         nargs: 1
         nlocals: 0
-        literals: 'value:','linkedlist.st','ifTrue:'
+        literals: 'linkedlist.st','value:','ifTrue:'
         0000:  push_local     1, 0
         0005:  push_local     0, 0
         0010:  dbg 'linkedlist.st', 42:26
@@ -346,7 +346,7 @@ methods:
         qualifiedName: removeAllSuchThat:-block0>>removeAllSuchThat:-block1
         nargs: 0
         nlocals: 0
-        literals: 'remove:','linkedlist.st'
+        literals: 'linkedlist.st','remove:'
         0000:  self             
         0001:  push_local     1, 0
         0006:  dbg 'linkedlist.st', 42:50
@@ -401,7 +401,7 @@ methods:
         qualifiedName: do:>>do:-block1
         nargs: 0
         nlocals: 0
-        literals: 'value','linkedlist.st','value:','nextLink'
+        literals: 'linkedlist.st','value','value:','nextLink'
         0000:  push_local     1, 0
         0005:  dbg 'linkedlist.st', 64:43
         0012:  push_local     1, 1
