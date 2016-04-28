@@ -193,9 +193,11 @@ public class Compiler {
 
 	public static List<STMetaClassObject> getMetaObjects(STSymbolTable symtab) {
 		VirtualMachine vm = new VirtualMachine(symtab);
-		STMetaClassObject linkedListClass = vm.lookupClass("LinkedList");
+		STMetaClassObject linkedListClass1 = vm.lookupClass("LinkedList");
+		STMetaClassObject linkedListClass2 = vm.lookupClass("Link");
 		LinkedList<STMetaClassObject> stMetaClassObjects = new LinkedList<>();
-		stMetaClassObjects.add(linkedListClass);
+		stMetaClassObjects.add(linkedListClass1);
+		stMetaClassObjects.add(linkedListClass2);
 
 		return stMetaClassObjects;
 	}
