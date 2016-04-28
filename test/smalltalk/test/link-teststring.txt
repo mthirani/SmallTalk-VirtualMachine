@@ -1,0 +1,73 @@
+name: Link
+superClass: Object
+fields: _value,link
+methods:
+    name: nextLink:
+    qualifiedName: Link>>nextLink:
+    nargs: 1
+    nlocals: 0
+    literals: 
+    0000:  push_local     0, 0
+    0005:  store_field    1
+    0008:  pop              
+    0009:  self             
+    0010:  return           
+
+    name: asString
+    qualifiedName: Link>>asString
+    nargs: 0
+    nlocals: 0
+    literals: 'asString'
+    0000:  push_field     0
+    0003:  send           0, 'asString'
+    0008:  return           
+    0009:  pop              
+    0010:  self             
+    0011:  return           
+
+    name: value:
+    qualifiedName: Link>>value:
+    nargs: 1
+    nlocals: 0
+    literals: 
+    0000:  push_local     0, 0
+    0005:  store_field    0
+    0008:  pop              
+    0009:  self             
+    0010:  return           
+
+    name: value
+    qualifiedName: Link>>value
+    nargs: 0
+    nlocals: 0
+    literals: 
+    0000:  push_field     0
+    0003:  return           
+    0004:  pop              
+    0005:  self             
+    0006:  return           
+
+    name: static withValue:
+    qualifiedName: Link>>withValue:
+    nargs: 1
+    nlocals: 0
+    literals: 'new','value:'
+    0000:  self             
+    0001:  send_super     0, 'new'
+    0006:  push_local     0, 0
+    0011:  send           1, 'value:'
+    0016:  return           
+    0017:  pop              
+    0018:  self             
+    0019:  return           
+
+    name: nextLink
+    qualifiedName: Link>>nextLink
+    nargs: 0
+    nlocals: 0
+    literals: 
+    0000:  push_field     1
+    0003:  return           
+    0004:  pop              
+    0005:  self             
+    0006:  return           

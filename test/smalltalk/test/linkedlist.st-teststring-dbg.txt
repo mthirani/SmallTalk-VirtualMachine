@@ -1,0 +1,418 @@
+name: LinkedList
+superClass: Collection
+fields: head,tail
+methods:
+    name: addLast:
+    qualifiedName: LinkedList>>addLast:
+    nargs: 1
+    nlocals: 0
+    literals: 'linkedlist.st','isEmpty','ifTrue:ifFalse:'
+    0000:  dbg 'linkedlist.st', 29:12
+    0007:  self             
+    0008:  send           0, 'isEmpty'
+    0013:  block          0
+    0016:  block          1
+    0019:  dbg 'linkedlist.st', 30:11
+    0026:  send           2, 'ifTrue:ifFalse:'
+    0031:  dbg 'linkedlist.st', 32:3
+    0038:  pop              
+    0039:  self             
+    0040:  return           
+    blocks:
+        name: addLast:-block0
+        qualifiedName: addLast:>>addLast:-block0
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','Link','withValue:'
+        0000:  dbg 'linkedlist.st', 30:22
+        0007:  push_global    'Link'
+        0010:  push_local     1, 0
+        0015:  dbg 'linkedlist.st', 30:35
+        0022:  send           1, 'withValue:'
+        0027:  store_field    0
+        0030:  pop              
+        0031:  dbg 'linkedlist.st', 30:49
+        0038:  push_field     0
+        0041:  store_field    1
+        0044:  dbg 'linkedlist.st', 30:62
+        0051:  block_return     
+
+        name: addLast:-block1
+        qualifiedName: addLast:>>addLast:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','Link','withValue:','nextLink:','nextLink'
+        0000:  push_field     1
+        0003:  push_global    'Link'
+        0006:  push_local     1, 0
+        0011:  dbg 'linkedlist.st', 31:43
+        0018:  send           1, 'withValue:'
+        0023:  dbg 'linkedlist.st', 31:27
+        0030:  send           1, 'nextLink:'
+        0035:  pop              
+        0036:  dbg 'linkedlist.st', 31:58
+        0043:  dbg 'linkedlist.st', 31:71
+        0050:  push_field     1
+        0053:  send           0, 'nextLink'
+        0058:  store_field    1
+        0061:  dbg 'linkedlist.st', 31:80
+        0068:  block_return     
+
+    name: removeAll
+    qualifiedName: LinkedList>>removeAll
+    nargs: 0
+    nlocals: 0
+    literals: 'linkedlist.st'
+    0000:  dbg 'linkedlist.st', 33:15
+    0007:  nil              
+    0008:  store_field    0
+    0011:  pop              
+    0012:  dbg 'linkedlist.st', 33:28
+    0019:  nil              
+    0020:  store_field    1
+    0023:  dbg 'linkedlist.st', 33:40
+    0030:  pop              
+    0031:  self             
+    0032:  return           
+
+    name: remove:
+    qualifiedName: LinkedList>>remove:
+    nargs: 1
+    nlocals: 2
+    literals: 'linkedlist.st','whileTrue:'
+    0000:  dbg 'linkedlist.st', 46:7
+    0007:  nil              
+    0008:  store_local    0, 1
+    0013:  pop              
+    0014:  dbg 'linkedlist.st', 47:7
+    0021:  push_field     0
+    0024:  store_local    0, 2
+    0029:  pop              
+    0030:  block          0
+    0033:  block          1
+    0036:  dbg 'linkedlist.st', 48:16
+    0043:  send           1, 'whileTrue:'
+    0048:  dbg 'linkedlist.st', 60:3
+    0055:  pop              
+    0056:  self             
+    0057:  return           
+    blocks:
+        name: remove:-block0
+        qualifiedName: remove:>>remove:-block0
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','~~'
+        0000:  dbg 'linkedlist.st', 48:9
+        0007:  push_local     1, 2
+        0012:  nil              
+        0013:  send           1, '~~'
+        0018:  dbg 'linkedlist.st', 48:14
+        0025:  block_return     
+
+        name: remove:-block1
+        qualifiedName: remove:>>remove:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','value','=','ifTrue:','nextLink'
+        0000:  dbg 'linkedlist.st', 49:19
+        0007:  dbg 'linkedlist.st', 49:13
+        0014:  push_local     1, 2
+        0019:  send           0, 'value'
+        0024:  push_local     1, 0
+        0029:  send           1, '='
+        0034:  block          2
+        0037:  dbg 'linkedlist.st', 49:23
+        0044:  send           1, 'ifTrue:'
+        0049:  pop              
+        0050:  dbg 'linkedlist.st', 57:11
+        0057:  push_local     1, 2
+        0062:  store_local    1, 1
+        0067:  pop              
+        0068:  dbg 'linkedlist.st', 58:11
+        0075:  dbg 'linkedlist.st', 58:18
+        0082:  push_local     1, 2
+        0087:  send           0, 'nextLink'
+        0092:  store_local    1, 2
+        0097:  dbg 'linkedlist.st', 59:7
+        0104:  block_return     
+
+        name: remove:-block2
+        qualifiedName: remove:-block1>>remove:-block2
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','==','ifTrue:ifFalse:'
+        0000:  dbg 'linkedlist.st', 50:19
+        0007:  push_local     2, 1
+        0012:  nil              
+        0013:  send           1, '=='
+        0018:  block          3
+        0021:  block          4
+        0024:  dbg 'linkedlist.st', 51:19
+        0031:  send           2, 'ifTrue:ifFalse:'
+        0036:  dbg 'linkedlist.st', 56:11
+        0043:  block_return     
+
+        name: remove:-block3
+        qualifiedName: remove:-block2>>remove:-block3
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','removeFirst'
+        0000:  dbg 'linkedlist.st', 51:35
+        0007:  self             
+        0008:  send           0, 'removeFirst'
+        0013:  dbg 'linkedlist.st', 51:47
+        0020:  block_return     
+
+        name: remove:-block4
+        qualifiedName: remove:-block2>>remove:-block4
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','nextLink','nextLink:','==','ifTrue:'
+        0000:  push_local     3, 1
+        0005:  dbg 'linkedlist.st', 53:40
+        0012:  push_local     3, 2
+        0017:  send           0, 'nextLink'
+        0022:  dbg 'linkedlist.st', 53:28
+        0029:  send           1, 'nextLink:'
+        0034:  pop              
+        0035:  dbg 'linkedlist.st', 54:24
+        0042:  push_local     3, 2
+        0047:  push_field     1
+        0050:  send           1, '=='
+        0055:  block          5
+        0058:  dbg 'linkedlist.st', 54:31
+        0065:  send           1, 'ifTrue:'
+        0070:  dbg 'linkedlist.st', 55:19
+        0077:  block_return     
+
+        name: remove:-block5
+        qualifiedName: remove:-block4>>remove:-block5
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st'
+        0000:  dbg 'linkedlist.st', 54:40
+        0007:  push_local     4, 1
+        0012:  store_field    1
+        0015:  dbg 'linkedlist.st', 54:52
+        0022:  block_return     
+
+    name: last
+    qualifiedName: LinkedList>>last
+    nargs: 0
+    nlocals: 0
+    literals: 'linkedlist.st'
+    0000:  push_field     1
+    0003:  dbg 'linkedlist.st', 19:9
+    0010:  return           
+    0011:  dbg 'linkedlist.st', 19:14
+    0018:  pop              
+    0019:  self             
+    0020:  return           
+
+    name: add:
+    qualifiedName: LinkedList>>add:
+    nargs: 1
+    nlocals: 0
+    literals: 'linkedlist.st','addLast:'
+    0000:  self             
+    0001:  push_local     0, 0
+    0006:  dbg 'linkedlist.st', 21:17
+    0013:  send           1, 'addLast:'
+    0018:  dbg 'linkedlist.st', 21:28
+    0025:  pop              
+    0026:  self             
+    0027:  return           
+
+    name: removeFirst
+    qualifiedName: LinkedList>>removeFirst
+    nargs: 0
+    nlocals: 0
+    literals: 'linkedlist.st','==','ifFalse:'
+    0000:  dbg 'linkedlist.st', 35:12
+    0007:  push_field     0
+    0010:  nil              
+    0011:  send           1, '=='
+    0016:  block          0
+    0019:  dbg 'linkedlist.st', 35:19
+    0026:  send           1, 'ifFalse:'
+    0031:  dbg 'linkedlist.st', 39:3
+    0038:  pop              
+    0039:  self             
+    0040:  return           
+    blocks:
+        name: removeFirst-block0
+        qualifiedName: removeFirst>>removeFirst-block0
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','nextLink','==','ifTrue:'
+        0000:  dbg 'linkedlist.st', 36:11
+        0007:  dbg 'linkedlist.st', 36:24
+        0014:  push_field     0
+        0017:  send           0, 'nextLink'
+        0022:  store_field    0
+        0025:  pop              
+        0026:  dbg 'linkedlist.st', 37:15
+        0033:  push_field     0
+        0036:  nil              
+        0037:  send           1, '=='
+        0042:  block          1
+        0045:  dbg 'linkedlist.st', 37:21
+        0052:  send           1, 'ifTrue:'
+        0057:  dbg 'linkedlist.st', 38:7
+        0064:  block_return     
+
+        name: removeFirst-block1
+        qualifiedName: removeFirst-block0>>removeFirst-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st'
+        0000:  dbg 'linkedlist.st', 37:30
+        0007:  nil              
+        0008:  store_field    1
+        0011:  dbg 'linkedlist.st', 37:39
+        0018:  block_return     
+
+    name: isEmpty
+    qualifiedName: LinkedList>>isEmpty
+    nargs: 0
+    nlocals: 0
+    literals: 'linkedlist.st','=='
+    0000:  dbg 'linkedlist.st', 20:19
+    0007:  push_field     0
+    0010:  nil              
+    0011:  send           1, '=='
+    0016:  dbg 'linkedlist.st', 20:13
+    0023:  return           
+    0024:  dbg 'linkedlist.st', 20:26
+    0031:  pop              
+    0032:  self             
+    0033:  return           
+
+    name: addFirst:
+    qualifiedName: LinkedList>>addFirst:
+    nargs: 1
+    nlocals: 1
+    literals: 'linkedlist.st','Link','withValue:','nextLink:'
+    0000:  dbg 'linkedlist.st', 24:7
+    0007:  push_global    'Link'
+    0010:  push_local     0, 0
+    0015:  dbg 'linkedlist.st', 24:17
+    0022:  send           1, 'withValue:'
+    0027:  store_local    0, 1
+    0032:  pop              
+    0033:  push_local     0, 1
+    0038:  push_field     0
+    0041:  dbg 'linkedlist.st', 25:9
+    0048:  send           1, 'nextLink:'
+    0053:  pop              
+    0054:  dbg 'linkedlist.st', 26:7
+    0061:  push_local     0, 1
+    0066:  store_field    0
+    0069:  dbg 'linkedlist.st', 27:3
+    0076:  pop              
+    0077:  self             
+    0078:  return           
+
+    name: removeAllSuchThat:
+    qualifiedName: LinkedList>>removeAllSuchThat:
+    nargs: 1
+    nlocals: 0
+    literals: 'linkedlist.st','do:'
+    0000:  self             
+    0001:  block          0
+    0004:  dbg 'linkedlist.st', 42:11
+    0011:  send           1, 'do:'
+    0016:  dbg 'linkedlist.st', 43:3
+    0023:  pop              
+    0024:  self             
+    0025:  return           
+    blocks:
+        name: removeAllSuchThat:-block0
+        qualifiedName: removeAllSuchThat:>>removeAllSuchThat:-block0
+        nargs: 1
+        nlocals: 0
+        literals: 'linkedlist.st','value:','ifTrue:'
+        0000:  push_local     1, 0
+        0005:  push_local     0, 0
+        0010:  dbg 'linkedlist.st', 42:26
+        0017:  send           1, 'value:'
+        0022:  block          1
+        0025:  dbg 'linkedlist.st', 42:36
+        0032:  send           1, 'ifTrue:'
+        0037:  dbg 'linkedlist.st', 42:60
+        0044:  block_return     
+
+        name: removeAllSuchThat:-block1
+        qualifiedName: removeAllSuchThat:-block0>>removeAllSuchThat:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','remove:'
+        0000:  self             
+        0001:  push_local     1, 0
+        0006:  dbg 'linkedlist.st', 42:50
+        0013:  send           1, 'remove:'
+        0018:  dbg 'linkedlist.st', 42:59
+        0025:  block_return     
+
+    name: first
+    qualifiedName: LinkedList>>first
+    nargs: 0
+    nlocals: 0
+    literals: 'linkedlist.st'
+    0000:  push_field     0
+    0003:  dbg 'linkedlist.st', 18:10
+    0010:  return           
+    0011:  dbg 'linkedlist.st', 18:15
+    0018:  pop              
+    0019:  self             
+    0020:  return           
+
+    name: do:
+    qualifiedName: LinkedList>>do:
+    nargs: 1
+    nlocals: 1
+    literals: 'linkedlist.st','whileTrue:'
+    0000:  dbg 'linkedlist.st', 63:7
+    0007:  push_field     0
+    0010:  store_local    0, 1
+    0015:  pop              
+    0016:  block          0
+    0019:  block          1
+    0022:  dbg 'linkedlist.st', 64:16
+    0029:  send           1, 'whileTrue:'
+    0034:  dbg 'linkedlist.st', 65:3
+    0041:  pop              
+    0042:  self             
+    0043:  return           
+    blocks:
+        name: do:-block0
+        qualifiedName: do:>>do:-block0
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','~~'
+        0000:  dbg 'linkedlist.st', 64:9
+        0007:  push_local     1, 1
+        0012:  nil              
+        0013:  send           1, '~~'
+        0018:  dbg 'linkedlist.st', 64:14
+        0025:  block_return     
+
+        name: do:-block1
+        qualifiedName: do:>>do:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'linkedlist.st','value','value:','nextLink'
+        0000:  push_local     1, 0
+        0005:  dbg 'linkedlist.st', 64:43
+        0012:  push_local     1, 1
+        0017:  send           0, 'value'
+        0022:  dbg 'linkedlist.st', 64:33
+        0029:  send           1, 'value:'
+        0034:  pop              
+        0035:  dbg 'linkedlist.st', 64:51
+        0042:  dbg 'linkedlist.st', 64:58
+        0049:  push_local     1, 1
+        0054:  send           0, 'nextLink'
+        0059:  store_local    1, 1
+        0064:  dbg 'linkedlist.st', 64:67
+        0071:  block_return     

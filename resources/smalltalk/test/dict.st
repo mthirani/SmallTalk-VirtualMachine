@@ -54,4 +54,3 @@ class Dictionary : Collection [
     ]
     removeAll [ self initialize ]
 ]
-

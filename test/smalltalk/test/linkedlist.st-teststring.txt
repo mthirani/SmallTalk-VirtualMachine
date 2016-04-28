@@ -1,0 +1,337 @@
+name: LinkedList
+superClass: Collection
+fields: head,tail
+methods:
+    name: addLast:
+    qualifiedName: LinkedList>>addLast:
+    nargs: 1
+    nlocals: 0
+    literals: 'isEmpty','ifTrue:ifFalse:'
+    0000:  self             
+    0001:  send           0, 'isEmpty'
+    0006:  block          0
+    0009:  block          1
+    0012:  send           2, 'ifTrue:ifFalse:'
+    0017:  pop              
+    0018:  self             
+    0019:  return           
+    blocks:
+        name: addLast:-block0
+        qualifiedName: addLast:>>addLast:-block0
+        nargs: 0
+        nlocals: 0
+        literals: 'Link','withValue:'
+        0000:  push_global    'Link'
+        0003:  push_local     1, 0
+        0008:  send           1, 'withValue:'
+        0013:  store_field    0
+        0016:  pop              
+        0017:  push_field     0
+        0020:  store_field    1
+        0023:  block_return     
+
+        name: addLast:-block1
+        qualifiedName: addLast:>>addLast:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'Link','withValue:','nextLink:','nextLink'
+        0000:  push_field     1
+        0003:  push_global    'Link'
+        0006:  push_local     1, 0
+        0011:  send           1, 'withValue:'
+        0016:  send           1, 'nextLink:'
+        0021:  pop              
+        0022:  push_field     1
+        0025:  send           0, 'nextLink'
+        0030:  store_field    1
+        0033:  block_return     
+
+    name: removeAll
+    qualifiedName: LinkedList>>removeAll
+    nargs: 0
+    nlocals: 0
+    literals: 
+    0000:  nil              
+    0001:  store_field    0
+    0004:  pop              
+    0005:  nil              
+    0006:  store_field    1
+    0009:  pop              
+    0010:  self             
+    0011:  return           
+
+    name: remove:
+    qualifiedName: LinkedList>>remove:
+    nargs: 1
+    nlocals: 2
+    literals: 'whileTrue:'
+    0000:  nil              
+    0001:  store_local    0, 1
+    0006:  pop              
+    0007:  push_field     0
+    0010:  store_local    0, 2
+    0015:  pop              
+    0016:  block          0
+    0019:  block          1
+    0022:  send           1, 'whileTrue:'
+    0027:  pop              
+    0028:  self             
+    0029:  return           
+    blocks:
+        name: remove:-block0
+        qualifiedName: remove:>>remove:-block0
+        nargs: 0
+        nlocals: 0
+        literals: '~~'
+        0000:  push_local     1, 2
+        0005:  nil              
+        0006:  send           1, '~~'
+        0011:  block_return     
+
+        name: remove:-block1
+        qualifiedName: remove:>>remove:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'value','=','ifTrue:','nextLink'
+        0000:  push_local     1, 2
+        0005:  send           0, 'value'
+        0010:  push_local     1, 0
+        0015:  send           1, '='
+        0020:  block          2
+        0023:  send           1, 'ifTrue:'
+        0028:  pop              
+        0029:  push_local     1, 2
+        0034:  store_local    1, 1
+        0039:  pop              
+        0040:  push_local     1, 2
+        0045:  send           0, 'nextLink'
+        0050:  store_local    1, 2
+        0055:  block_return     
+
+        name: remove:-block2
+        qualifiedName: remove:-block1>>remove:-block2
+        nargs: 0
+        nlocals: 0
+        literals: '==','ifTrue:ifFalse:'
+        0000:  push_local     2, 1
+        0005:  nil              
+        0006:  send           1, '=='
+        0011:  block          3
+        0014:  block          4
+        0017:  send           2, 'ifTrue:ifFalse:'
+        0022:  block_return     
+
+        name: remove:-block3
+        qualifiedName: remove:-block2>>remove:-block3
+        nargs: 0
+        nlocals: 0
+        literals: 'removeFirst'
+        0000:  self             
+        0001:  send           0, 'removeFirst'
+        0006:  block_return     
+
+        name: remove:-block4
+        qualifiedName: remove:-block2>>remove:-block4
+        nargs: 0
+        nlocals: 0
+        literals: 'nextLink','nextLink:','==','ifTrue:'
+        0000:  push_local     3, 1
+        0005:  push_local     3, 2
+        0010:  send           0, 'nextLink'
+        0015:  send           1, 'nextLink:'
+        0020:  pop              
+        0021:  push_local     3, 2
+        0026:  push_field     1
+        0029:  send           1, '=='
+        0034:  block          5
+        0037:  send           1, 'ifTrue:'
+        0042:  block_return     
+
+        name: remove:-block5
+        qualifiedName: remove:-block4>>remove:-block5
+        nargs: 0
+        nlocals: 0
+        literals: 
+        0000:  push_local     4, 1
+        0005:  store_field    1
+        0008:  block_return     
+
+    name: last
+    qualifiedName: LinkedList>>last
+    nargs: 0
+    nlocals: 0
+    literals: 
+    0000:  push_field     1
+    0003:  return           
+    0004:  pop              
+    0005:  self             
+    0006:  return           
+
+    name: add:
+    qualifiedName: LinkedList>>add:
+    nargs: 1
+    nlocals: 0
+    literals: 'addLast:'
+    0000:  self             
+    0001:  push_local     0, 0
+    0006:  send           1, 'addLast:'
+    0011:  pop              
+    0012:  self             
+    0013:  return           
+
+    name: removeFirst
+    qualifiedName: LinkedList>>removeFirst
+    nargs: 0
+    nlocals: 0
+    literals: '==','ifFalse:'
+    0000:  push_field     0
+    0003:  nil              
+    0004:  send           1, '=='
+    0009:  block          0
+    0012:  send           1, 'ifFalse:'
+    0017:  pop              
+    0018:  self             
+    0019:  return           
+    blocks:
+        name: removeFirst-block0
+        qualifiedName: removeFirst>>removeFirst-block0
+        nargs: 0
+        nlocals: 0
+        literals: 'nextLink','==','ifTrue:'
+        0000:  push_field     0
+        0003:  send           0, 'nextLink'
+        0008:  store_field    0
+        0011:  pop              
+        0012:  push_field     0
+        0015:  nil              
+        0016:  send           1, '=='
+        0021:  block          1
+        0024:  send           1, 'ifTrue:'
+        0029:  block_return     
+
+        name: removeFirst-block1
+        qualifiedName: removeFirst-block0>>removeFirst-block1
+        nargs: 0
+        nlocals: 0
+        literals: 
+        0000:  nil              
+        0001:  store_field    1
+        0004:  block_return     
+
+    name: isEmpty
+    qualifiedName: LinkedList>>isEmpty
+    nargs: 0
+    nlocals: 0
+    literals: '=='
+    0000:  push_field     0
+    0003:  nil              
+    0004:  send           1, '=='
+    0009:  return           
+    0010:  pop              
+    0011:  self             
+    0012:  return           
+
+    name: addFirst:
+    qualifiedName: LinkedList>>addFirst:
+    nargs: 1
+    nlocals: 1
+    literals: 'Link','withValue:','nextLink:'
+    0000:  push_global    'Link'
+    0003:  push_local     0, 0
+    0008:  send           1, 'withValue:'
+    0013:  store_local    0, 1
+    0018:  pop              
+    0019:  push_local     0, 1
+    0024:  push_field     0
+    0027:  send           1, 'nextLink:'
+    0032:  pop              
+    0033:  push_local     0, 1
+    0038:  store_field    0
+    0041:  pop              
+    0042:  self             
+    0043:  return           
+
+    name: removeAllSuchThat:
+    qualifiedName: LinkedList>>removeAllSuchThat:
+    nargs: 1
+    nlocals: 0
+    literals: 'do:'
+    0000:  self             
+    0001:  block          0
+    0004:  send           1, 'do:'
+    0009:  pop              
+    0010:  self             
+    0011:  return           
+    blocks:
+        name: removeAllSuchThat:-block0
+        qualifiedName: removeAllSuchThat:>>removeAllSuchThat:-block0
+        nargs: 1
+        nlocals: 0
+        literals: 'value:','ifTrue:'
+        0000:  push_local     1, 0
+        0005:  push_local     0, 0
+        0010:  send           1, 'value:'
+        0015:  block          1
+        0018:  send           1, 'ifTrue:'
+        0023:  block_return     
+
+        name: removeAllSuchThat:-block1
+        qualifiedName: removeAllSuchThat:-block0>>removeAllSuchThat:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'remove:'
+        0000:  self             
+        0001:  push_local     1, 0
+        0006:  send           1, 'remove:'
+        0011:  block_return     
+
+    name: first
+    qualifiedName: LinkedList>>first
+    nargs: 0
+    nlocals: 0
+    literals: 
+    0000:  push_field     0
+    0003:  return           
+    0004:  pop              
+    0005:  self             
+    0006:  return           
+
+    name: do:
+    qualifiedName: LinkedList>>do:
+    nargs: 1
+    nlocals: 1
+    literals: 'whileTrue:'
+    0000:  push_field     0
+    0003:  store_local    0, 1
+    0008:  pop              
+    0009:  block          0
+    0012:  block          1
+    0015:  send           1, 'whileTrue:'
+    0020:  pop              
+    0021:  self             
+    0022:  return           
+    blocks:
+        name: do:-block0
+        qualifiedName: do:>>do:-block0
+        nargs: 0
+        nlocals: 0
+        literals: '~~'
+        0000:  push_local     1, 1
+        0005:  nil              
+        0006:  send           1, '~~'
+        0011:  block_return     
+
+        name: do:-block1
+        qualifiedName: do:>>do:-block1
+        nargs: 0
+        nlocals: 0
+        literals: 'value','value:','nextLink'
+        0000:  push_local     1, 0
+        0005:  push_local     1, 1
+        0010:  send           0, 'value'
+        0015:  send           1, 'value:'
+        0020:  pop              
+        0021:  push_local     1, 1
+        0026:  send           0, 'nextLink'
+        0031:  store_local    1, 1
+        0036:  block_return     
